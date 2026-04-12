@@ -1,0 +1,29 @@
+# Site settings
+title: DisplacementActivities
+description: Sound, text, performance and archive
+baseurl: "/DA-test"
+url: "https://ontomena.github.io"
+
+# Build settings
+markdown: kramdown
+permalink: /:categories/:year/:month/:day/:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /:categories/:year/:month/:day/:title/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+# Exclude from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <header>
+    <h1 class="site-title">
+      <a href="{{ '/' | relative_url }}">DisplacementActivities</a>
+    </h1>
+    <nav>
+      <ul>
+        <li><a href="{{ '/' | relative_url }}">home</a></li>
+        <li><a href="{{ '/commentarium/' | relative_url }}">commentarium</a></li>
+        <li><a href="{{ '/contact/' | relative_url }}">contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer>
+    <p>© DA 2026</p>
+  </footer>
+</body>
+</html>
