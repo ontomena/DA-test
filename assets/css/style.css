@@ -32,14 +32,23 @@ header {
 
 .site-title {
   font-size: 2em;
-  font-weight: bold;
-  margin-bottom: 20px;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  margin-bottom: 15px;
+  letter-spacing: 0.03em;
 }
 
 .site-title a {
   color: var(--text-primary);
   text-decoration: none;
+}
+
+.site-header-image {
+  width: 100%;
+  height: 60px;
+  object-fit: cover;
+  object-position: center bottom;
+  margin-bottom: 20px;
+  display: block;
 }
 
 nav ul {
@@ -145,6 +154,10 @@ h1 {
   color: var(--accent-blue);
 }
 
+.back-link:visited {
+  color: #c9a5a5;
+}
+
 .post-header {
   margin-bottom: 30px;
 }
@@ -175,6 +188,10 @@ h1 {
   font-size: 1.05em;
   line-height: 1.8;
   max-width: 800px;
+}
+
+.home-content .site-header-image {
+  filter: saturate(0.5);
 }
 
 .home-content p {
