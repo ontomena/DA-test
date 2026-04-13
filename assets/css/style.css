@@ -44,7 +44,7 @@ header {
 
 .site-header-image {
   width: 100%;
-  height: 60px;
+  height: 230px;
   object-fit: cover;
   object-position: center bottom;
   margin-bottom: 20px;
@@ -219,6 +219,50 @@ footer {
   margin-top: 60px;
   font-size: 0.9em;
   color: var(--text-secondary);
+}
+
+/* Alphabetical Index */
+.alphabetical-index {
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.index-section {
+  margin-bottom: 40px;
+}
+
+.index-letter {
+  font-size: 1.8em;
+  font-weight: normal;
+  color: var(--accent-blue);
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.index-list {
+  list-style: none;
+  padding: 0;
+}
+
+.index-list li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.index-list a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 1.05em;
+}
+
+.index-list a:hover {
+  color: var(--accent-blue);
+}
+
+.index-meta {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  margin-left: 8px;
 }
 
 /* Mobile responsive */
