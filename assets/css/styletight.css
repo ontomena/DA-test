@@ -28,16 +28,6 @@ header {
   border-bottom: 1px solid var(--border-light);
   margin-bottom: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  position: sticky;
-  top: 0;
-  background: var(--background);
-  z-index: 100;
-  transition: box-shadow 0.3s ease, padding 0.3s ease;
-}
-
-header.scrolled {
-  box-shadow: 0 2px 8px rgba(74, 124, 158, 0.15);
-  padding: 15px 0 8px;
 }
 
 .header-content {
@@ -101,16 +91,6 @@ nav {
   border-bottom: 1px solid var(--border-light);
   margin-bottom: 20px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  position: sticky;
-  top: 60px;
-  background: var(--background);
-  z-index: 99;
-  transition: padding 0.3s ease, top 0.3s ease;
-}
-
-nav.scrolled {
-  padding: 8px 20px;
-  top: 50px;
 }
 
 nav ul {
