@@ -33,6 +33,7 @@ header {
   background: var(--background);
   z-index: 1000;
   transition: box-shadow 0.3s ease, padding 0.3s ease;
+  isolation: isolate;
 }
 
 header.scrolled {
@@ -106,6 +107,7 @@ nav {
   background: var(--background);
   z-index: 999;
   transition: padding 0.3s ease, top 0.3s ease;
+  isolation: isolate;
 }
 
 nav.scrolled {
