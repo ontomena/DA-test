@@ -4,6 +4,7 @@ title: contact
 permalink: /contact/
 ---
 
+<div id="contact-page">
 <h1>contact</h1>
 
 <div class="home-content">
@@ -39,5 +40,7 @@ permalink: /contact/
 <hr style="margin: 40px 0; border: none; border-top: 1px solid #e0e0e0;">
 
 <p style="font-size: 0.9em; color: #666;">This site was put together on Github using GitHub Desktop and Visual Studio Code. Although Microsoft acquired GitHub in 2018, the free version still exists relatively unmolested.</p>
+
+</div>
 
 </div>

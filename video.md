@@ -4,6 +4,7 @@ title: video
 permalink: /video/
 ---
 
+<div id="video-page">
 <h1>video</h1>
 
 <div class="posts-grid">
@@ -29,4 +30,5 @@ permalink: /video/
       <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 25 }}</p>
     </a>
   {% endfor %}
+</div>
 </div>

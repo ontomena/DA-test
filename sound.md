@@ -4,6 +4,7 @@ title: sound
 permalink: /sound/
 ---
 
+<div id="sound-page">
 <h1>sound</h1>
 
 <div class="posts-grid">
@@ -29,4 +30,5 @@ permalink: /sound/
       <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 25 }}</p>
     </a>
   {% endfor %}
+</div>
 </div>

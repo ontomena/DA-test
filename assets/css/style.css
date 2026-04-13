@@ -19,7 +19,7 @@ body {
   background: var(--background);
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
 }
 
 /* Header */
@@ -64,6 +64,26 @@ body:has(.home-content) .site-header-image {
   filter: saturate(0.5);
 }
 
+/* Video page - slight warm shift */
+body:has(#video-page) .site-header-image {
+  filter: hue-rotate(10deg);
+}
+
+/* Sound page - slight cool shift */
+body:has(#sound-page) .site-header-image {
+  filter: hue-rotate(-15deg);
+}
+
+/* Index page - slightly brighter */
+body:has(#index-page) .site-header-image {
+  filter: brightness(1.05);
+}
+
+/* Contact page - subtle warm sepia */
+body:has(#contact-page) .site-header-image {
+  filter: sepia(0.2);
+}
+
 nav {
   max-width: 1200px;
   margin: 0 auto;
@@ -101,7 +121,7 @@ nav a:hover {
 /* Main content */
 main {
   min-height: 60vh;
-  padding-bottom: 60px;
+  padding: 0 20px 60px;
 }
 
 h1 {

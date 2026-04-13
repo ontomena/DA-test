@@ -4,6 +4,7 @@ title: index
 permalink: /index-page/
 ---
 
+<div id="index-page">
 <h1>index</h1>
 
 <div class="alphabetical-index">
@@ -28,4 +29,5 @@ permalink: /index-page/
       </ul>
     </div>
   {% endfor %}
+</div>
 </div>
