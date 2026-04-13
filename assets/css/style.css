@@ -60,6 +60,10 @@ header {
   width: 100vw;
 }
 
+body:has(.home-content) .site-header-image {
+  filter: saturate(0.5);
+}
+
 nav {
   max-width: 1200px;
   margin: 0 auto;
