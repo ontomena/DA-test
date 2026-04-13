@@ -11,7 +11,7 @@ permalink: /contact/
 
 <p>DisplacementActivities is a site according to Simon Bradley, combining archives with new material. I work with sound mainly, one way or another: oral history, installation, performance, locative media. If something doesn't sound, I often encourage it to do so.</p>
 
-<p>Insta/Threads: <a href="https://www.instagram.com/simonbrdly">@simonbrdly</a></p>
+<p>Insta: <a href="https://www.instagram.com/simonbrdly">@simonbrdly</a></p>
 
 <p>E: bradleysimon [at] hotmail dot com</p>
 

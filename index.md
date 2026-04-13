@@ -21,7 +21,7 @@ layout: default
 </blockquote>
 
 <p>vimeo: <a href="https://vimeo.com/user6604380">simon bradley</a><br>
-insta/threads: <a href="https://www.instagram.com/simonbrdly">@simonbrdly</a><br>
+insta: <a href="https://www.instagram.com/simonbrdly">@simonbrdly</a><br>
 bandcamp: <a href="https://simonbradley.bandcamp.com/">simonbradley</a></p>
 
 </div>
