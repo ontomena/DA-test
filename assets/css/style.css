@@ -20,6 +20,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -219,7 +220,7 @@ h1 {
 }
 
 .back-link:visited {
-  color: #c9a5a5;
+  color: #8fb3c9;
 }
 
 .post-header {
