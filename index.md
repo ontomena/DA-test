@@ -4,8 +4,6 @@ layout: default
 
 <div class="home-content">
 
-<h1>DisplacementActivities</h1>
-
 <blockquote>
 "Never mind about the Russians. Mr. Gridley has become much more of a menace"—Franklyn Ambruster in <em>The Notorious Landlady</em>, 1962
 </blockquote>
