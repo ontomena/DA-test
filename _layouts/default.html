@@ -8,21 +8,25 @@
 </head>
 <body>
   <header>
-    <h1 class="site-title">
-      <a href="{{ '/' | relative_url }}">DisplacementActivities</a>
-    </h1>
-    <img src="{{ '/assets/images/piano-strip230.jpg' | relative_url }}" alt="" class="site-header-image">
-    <nav>
-      <ul>
-        <li><a href="{{ '/' | relative_url }}">home</a></li>
-        <li><a href="{{ '/commentarium/' | relative_url }}">commentarium</a></li>
-        <li><a href="{{ '/video/' | relative_url }}">video</a></li>
-        <li><a href="{{ '/sound/' | relative_url }}">sound</a></li>
-        <li><a href="{{ '/index-page/' | relative_url }}">index</a></li>
-        <li><a href="{{ '/contact/' | relative_url }}">contact</a></li>
-      </ul>
-    </nav>
+    <div class="header-content">
+      <h1 class="site-title">
+        <a href="{{ '/' | relative_url }}">DisplacementActivities</a>
+      </h1>
+    </div>
   </header>
+  
+  <img src="{{ '/assets/images/piano-strip230.jpg' | relative_url }}" alt="" class="site-header-image">
+  
+  <nav>
+    <ul>
+      <li><a href="{{ '/' | relative_url }}">home</a></li>
+      <li><a href="{{ '/commentarium/' | relative_url }}">commentarium</a></li>
+      <li><a href="{{ '/video/' | relative_url }}">video</a></li>
+      <li><a href="{{ '/sound/' | relative_url }}">sound</a></li>
+      <li><a href="{{ '/index-page/' | relative_url }}">index</a></li>
+      <li><a href="{{ '/contact/' | relative_url }}">contact</a></li>
+    </ul>
+  </nav>
 
   <main>
     {{ content }}

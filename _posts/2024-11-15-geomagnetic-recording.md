@@ -9,10 +9,13 @@ excerpt: "A sonification of geomagnetic field fluctuations captured at Eskdalemu
 
 A sonification of geomagnetic field fluctuations captured at Eskdalemuir Observatory, translated into audible frequencies through custom mapping algorithms.
 
-<audio controls style="width: 100%; margin: 20px 0;">
-  <source src="/DA-test/assets/audio/sound-clip-1.wav" type="audio/wav">
-  Your browser does not support the audio element.
-</audio>
+<div class="audio-player-wrapper">
+  <div class="audio-title">Geomagnetic Field Recording, Eskdalemuir 2024</div>
+  <audio controls>
+    <source src="/DA-test/assets/audio/sound-clip-1.wav" type="audio/wav">
+    Your browser does not support the audio element.
+  </audio>
+</div>
 
 The piece uses real-time data from the British Geological Survey, mapping variations in the Earth's magnetic field to tonal shifts and spatial positioning. Each channel represents a different component of the field vector, creating a three-dimensional sonic representation of invisible forces.
 
