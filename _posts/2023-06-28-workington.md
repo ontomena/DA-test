@@ -1,14 +1,17 @@
 ---
 layout: post
-title: "Workington Piano"
+title: "workington piano"
 date: 2023-06-28
-categories: [sound, video]
-image: /assets/images/workington.jpg
-excerpt: "A sonic intervention with a public piano in Workington, exploring the acoustic properties of civic space and the democratisation of musical performance."
+categories: [music, sound]
+image: /assets/images/workingtonpiano-thumb.jpg
+excerpt: "Brief description of the post"
 ---
+<iframe src="https://player.vimeo.com/video/840240279?h=683b023f13" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+<p><a href="https://vimeo.com/840240279">WorkingtonPiano</a> from <a href="https://vimeo.com/user6604380">simon bradley</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
 
-A sonic intervention with a public piano in Workington, exploring the acoustic properties of civic space and the democratisation of musical performance.
+This piece was produced for the musique concrète CD compilation 'ever present' (2023) published by the Institute for Alien Research on [Bandcamp](https://ifarmusiqueconcretecompilation.bandcamp.com/album/ever-present)
 
-The piece was recorded during a residency in West Cumbria, using one of the public pianos placed around the town centre. Rather than conventional performance, I was interested in the instrument as a spatial audio device—how sound propagates through shopping precincts, how passers-by become inadvertent participants.
+CDs are available for £5 (free postage) if you [contact](https://www.displacementactivities.org/about/) me.
 
-Short improvisations were interspersed with long periods of listening, allowing the ambient soundscape of the town to become part of the composition. The piano itself became less important than its role as catalyst for attention, a reason to stop and notice what was already sounding.
+
+

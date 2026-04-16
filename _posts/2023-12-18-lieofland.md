@@ -1,14 +1,14 @@
 ---
 layout: post
-title: "Lie of the Land"
+title: "lie of the land"
 date: 2023-12-18
-categories: [text]
-image: /assets/images/lieofland.jpg
-excerpt: "A written exploration of how landscape deceives, how what we see is never quite what is there, and how geography contains its own fictions."
+categories: [word, poetry, sound]
+image: /assets/images/lieoftheland-thumb.jpg
+excerpt: "Brief description of the post"
 ---
+<iframe src="https://player.vimeo.com/video/895909932?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="Lie of the Land #1"></iframe>
 
-A written exploration of how landscape deceives, how what we see is never quite what is there, and how geography contains its own fictions.
+This piece is part of an ongoing project that is experimenting with ways of processing archive material. The words I am reading are from a text fragment written in 1999 that arose from a ritual walk I was devising between Leeds, Bradford and Halifax. The text is still on its journey after forming the basis of 'Mardship Bow', a novel published on Lulu Press Inc in 2009. The images are taken randomly from my archive, focusing mainly on 1999.
 
-The phrase "lie of the land" carries a double meaning—both the configuration of terrain and the deceptions it contains. This piece examines both senses, tracing how our perception of place is mediated by maps, memory, and cultural conditioning.
+A pdf of the text is available [here](https://drive.google.com/file/d/14_sXCdnJ1a06xdlF366Xys0C-SXPxaPE/view?usp=sharing)
 
-Walking familiar routes, I've noticed how the same path can seem entirely different depending on direction, weather, time of day, state of mind. The land itself remains constant, yet what it reveals shifts continuously. Perhaps "lie" is the wrong word—the land simply offers different truths depending on how we approach it.
