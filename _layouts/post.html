@@ -4,9 +4,9 @@ layout: default
 
 {% if page.categories.size > 0 %}
   {% assign back_cat = page.categories | first | downcase %}
-  <a href="{{ back_cat | prepend: '/' | append: '/' | relative_url }}" class="back-link">← Back to {{ back_cat }}</a>
+  <a href="{{ back_cat | prepend: '/' | append: '/' | relative_url }}" class="back-link">← Back to {{ back_cat | capitalize }}</a>
 {% else %}
-  <a href="{{ '/' | relative_url }}" class="back-link">← Back to home</a>
+  <a href="{{ '/' | relative_url }}" class="back-link">← Back to Home</a>
 {% endif %}
 
 <article class="post">
@@ -16,7 +16,11 @@ layout: default
       <span class="post-categories">
         {% for category in page.categories %}
           {% assign cat_slug = category | downcase %}
-          <a href="{{ cat_slug | prepend: '/' | append: '/' | relative_url }}">{{ cat_slug }}</a>{% unless forloop.last %}, {% endunless %}
+          {% if forloop.first %}
+            <a href="{{ cat_slug | prepend: '/' | append: '/' | relative_url }}">{{ category | capitalize }}</a>
+          {% else %}
+            <a href="{{ cat_slug | prepend: '/' | append: '/' | relative_url }}">{{ category | downcase }}</a>
+          {% endif %}{% unless forloop.last %}, {% endunless %}
         {% endfor %}
       </span>
       <span> · {{ page.date | date: "%d %b %Y" }}</span>
@@ -30,7 +34,7 @@ layout: default
 
 {% if page.categories.size > 0 %}
   {% assign back_cat = page.categories | first | downcase %}
-  <a href="{{ back_cat | prepend: '/' | append: '/' | relative_url }}" class="back-link">← Back to {{ back_cat }}</a>
+  <a href="{{ back_cat | prepend: '/' | append: '/' | relative_url }}" class="back-link">← Back to {{ back_cat | capitalize }}</a>
 {% else %}
-  <a href="{{ '/' | relative_url }}" class="back-link">← Back to home</a>
+  <a href="{{ '/' | relative_url }}" class="back-link">← Back to Home</a>
 {% endif %}

@@ -1,15 +1,15 @@
 ---
 layout: default
-title: video
+title: Video
 permalink: /video/
+category_name: video
 ---
 
-<div id="video-page">
-<h1>video</h1>
+<div id="{{ page.category_name }}-page">
+<h1>{{ page.category_name | capitalize }}</h1>
 
 <div class="posts-grid">
-  {% assign video_posts = site.posts | where_exp: "post", "post.categories contains 'video'" %}
-  {% for post in video_posts %}
+  {% for post in site.categories[page.category_name] %}
     <a href="{{ post.url | relative_url }}" class="post-card">
       {% if post.image %}
         <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" class="post-thumbnail">
@@ -21,7 +21,7 @@ permalink: /video/
       
       <div class="post-categories">
         {% for category in post.categories %}
-          {{ category | capitalize }}{% unless forloop.last %}, {% endunless %}
+          {% if forloop.first %}{{ category | capitalize }}{% else %}{{ category | downcase }}{% endif %}{% unless forloop.last %}, {% endunless %}
         {% endfor %}
       </div>
       

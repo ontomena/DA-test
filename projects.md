@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Sound
-permalink: /sound/
-category_name: sound
+title: Projects
+permalink: /projects/
+category_name: projects
 ---
 
 <div id="{{ page.category_name }}-page">
