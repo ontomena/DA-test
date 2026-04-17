@@ -4,6 +4,7 @@
   --accent-blue: #4a7c9e;
   --background: #fff;
   --border-light: #e0e0e0;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -13,7 +14,7 @@
 }
 
 body {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
   line-height: 1.6;
   color: var(--text-primary);
   background: var(--background);
@@ -28,7 +29,7 @@ header {
   padding: 20px 0 10px;
   border-bottom: 1px solid var(--border-light);
   margin-bottom: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   position: sticky;
   top: 0;
   background: var(--background);
@@ -101,7 +102,7 @@ nav {
   padding: 10px 20px;
   border-bottom: 1px solid var(--border-light);
   margin-bottom: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   position: sticky;
   top: 0;
   background: var(--background);
@@ -128,10 +129,8 @@ nav li:not(:last-child)::after {
 nav a {
   color: var(--text-primary);
   text-decoration: none;
-  font-size: 1em;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-size: 0.85em;
+  font-size: 0.95em;
 }
 
 nav a:hover {
@@ -198,6 +197,15 @@ h1 {
   margin-bottom: 8px;
 }
 
+.post-categories a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-categories a:hover {
+  text-decoration: underline;
+}
+
 .post-excerpt {
   font-size: 0.95em;
   line-height: 1.5;
@@ -210,7 +218,7 @@ h1 {
   margin-bottom: 20px;
   color: var(--text-secondary);
   text-decoration: none;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 0.9em;
 }
 
@@ -235,6 +243,7 @@ h1 {
 .post-content {
   font-size: 1.05em;
   line-height: 1.8;
+  hyphens: auto;
 }
 
 .post-content p {
@@ -253,6 +262,7 @@ h1 {
   line-height: 1.8;
   max-width: 800px;
   text-align: justify;
+  hyphens: auto;
 }
 
 .home-content .site-header-image {
@@ -306,7 +316,7 @@ footer {
 
 /* Alphabetical Index */
 .alphabetical-index {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: var(--font-sans);
 }
 
 .index-section {

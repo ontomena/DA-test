@@ -2,7 +2,7 @@
 layout: default
 ---
 
-<div class="home-content">
+<div class="home-content" markdown="1">
 
 > "Never mind about the Russians. Mr. Gridley has become much more of a menace"—Franklyn Ambruster in *The Notorious Landlady*, 1962
 
@@ -24,7 +24,7 @@ A key aspect of sound is its ability to penetrate deeply while remaining fleetin
 
 I am no longer sure of the extent that politics is immanent in any art form, in a 'hyperpolitical' world it would seem banal that it is. Engaging with boundaries and edges, improvising freely within both human and non-human, indeed more-than-human, forms of obstruction has a tendency to rub up against the maintenance of existing power structures, but not necessarily. Tiny movements have the potential to be revolutionary—persistence of direction pervading through oscillation, akin to Henri Lefebvre's 'moments'. In a world where so many are compelled to move, any alignment with the [human flow](http://www.humanflow.com/action/) is straightforwardly political. There is certainly plenty to get upset about. It does feel a bit like liberal democratic globalist ideals are sliding backwards, does it not? What would backwards actually amount to though? A hill of beans? Geomagnetism is not the most obvious place to (re)start, but focusing on bi-polar powers way beyond human control can enlighten, in my view. Standing for peace, humanity, truth and justice is also a good place to start. Difficult, yes. Perhaps this diagram holds the key:
 
-![Waves image](/assets/images/wavesblue-small.jpeg)
+<p align="center"><img src="/assets/images/wavesblue-small.jpeg" alt="Waves image"></p>
 
 I have a vague recollection that there was an incident involving a sudden trip to my grandparents in Yeovil. I remember a sense of good-humoured panic. I think it was the first time I'd ever been to Cheddar Gorge. I only understood many years later how this was an early manifestation of DisplacementActivities at work in my life, when my father explained the urgency of his action in the light of the rapid escalation of the Cuban Missile Crisis that day. It was one of those vanishingly few occasions when I looked upon him with a deep feeling of pride. More than that: even a supposedly secure little family living in a small town in the heart of a safe country might find themselves numbered among a band of fearful, fleeing refugees within an instant. Something not to be forgotten.
 
@@ -32,7 +32,7 @@ I have a vague recollection that there was an incident involving a sudden trip t
 
 </div>
 
-<div style="text-align: left; margin-top: 40px;">
+<div style="text-align: left; margin-top: 40px;" markdown="1">
 
 vimeo: [simon bradley](https://vimeo.com/user6604380)  
 insta/threads: [@simonbrdly](https://www.instagram.com/simonbrdly)  
@@ -42,6 +42,6 @@ collaborations:
 vimeo: [ArtCouple](https://vimeo.com/user127952551)  
 bandcamp: [ESS<>GEE](https://essgee1.bandcamp.com/)
 
-![Arts Council Logo](https://www.artscouncil.org.uk/sites/default/files/download-file/grant_jpeg_black.jpg)
+<p align="center"><img src="https://www.artscouncil.org.uk/sites/default/files/download-file/grant_jpeg_black.jpg" alt="Arts Council Logo"></p>
 
 </div>
