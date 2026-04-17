@@ -8,7 +8,9 @@ permalink: /word/
 <h1>word</h1>
 
 <div class="posts-grid">
-  {% assign word_posts = site.posts | where_exp: "post", "post.categories contains 'word' or post.categories contains 'text'" %}
+  {% assign word_only = site.posts | where_exp: "post", "post.categories contains 'word'" %}
+  {% assign text_only = site.posts | where_exp: "post", "post.categories contains 'text'" %}
+  {% assign word_posts = word_only | concat: text_only | sort: 'date' | reverse | uniq %}
   {% for post in word_posts %}
     <a href="{{ post.url | relative_url }}" class="post-card">
       {% if post.image %}
