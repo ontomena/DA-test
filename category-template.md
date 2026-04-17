@@ -1,9 +1,30 @@
 ---
 layout: default
-title: Video
-permalink: /video/
-category_name: video
+title: Categoryname
+permalink: /categoryname/
+category_name: categoryname
 ---
+
+{% comment %}
+  === CATEGORY PAGE TEMPLATE ===
+  
+  A category page represents one of the three main site sections
+  (currently word / sound / video). Each post has exactly one category.
+  
+  The hybrid query below pulls posts where category == name OR tags
+  contains name — so a post with category "sound" and tag "word" 
+  appears on BOTH /sound/ AND /word/, giving cross-section visibility.
+  
+  To create a new category page:
+    1. Replace "Categoryname" (capitalised) with the capitalised name
+       (e.g. "Photography").
+    2. Replace "categoryname" (lowercase, two occurrences) with the 
+       lowercase name (e.g. "photography").
+    3. Save as <lowercase-name>.md in the repo root.
+    4. Add a nav menu entry in _layouts/default.html if desired.
+  
+  Nothing below this front matter needs changing.
+{% endcomment %}
 
 <div id="{{ page.category_name }}-page">
 <h1>{{ page.category_name | capitalize }}</h1>

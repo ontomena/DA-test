@@ -2,10 +2,12 @@
 layout: post
 title: "suite six dream"
 date: 2024-04-08
-categories: [album, word, poetry, sound, music]
+categories: [sound]
+tags: [album, music, word, poetry, performance]
 image: /assets/images/suitesixdream-thumb.jpg
 excerpt: "Brief description of the post"
 ---
+
 
 <p align="center"><img src="{{ '/assets/images/suitesix640.jpg' | relative_url }}" alt="Cover"></p>
 

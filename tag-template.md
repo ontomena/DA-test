@@ -1,9 +1,28 @@
 ---
 layout: default
-title: Poetry
-permalink: /poetry/
-tag_name: poetry
+title: Tagname
+permalink: /tagname/
+tag_name: tagname
 ---
+
+{% comment %}
+  === TAG PAGE TEMPLATE ===
+  
+  A tag page shows all posts tagged with a given theme
+  (e.g. album, poetry, projects, research, performance).
+  Tags are many-per-post, whereas categories are one-per-post.
+  
+  To create a new tag page:
+    1. Replace "Tagname" (capitalised) with the capitalised tag name.
+    2. Replace "tagname" (lowercase, two occurrences) with the lowercase
+       tag name.
+    3. Save as <lowercase-name>.md in the repo root.
+  
+  The tag will show up on posts automatically once posts are tagged
+  with it in their front matter.
+  
+  Nothing below this front matter needs changing.
+{% endcomment %}
 
 <div id="{{ page.tag_name }}-page">
 <h1>{{ page.tag_name | capitalize }}</h1>

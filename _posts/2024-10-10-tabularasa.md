@@ -2,10 +2,12 @@
 layout: post
 title: "tabula rasa"
 date: 2024-10-10
-categories: [word, poetry, sound, music, animation]
+categories: [video]
+tags: [word, poetry, sound, music, animation]
 image: /assets/images/tabularasa-thumb.jpg
 excerpt: "Brief description of the post"
 ---
+
 
 <iframe src="https://player.vimeo.com/video/1016794253" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe> 
 

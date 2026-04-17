@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Poetry
-permalink: /poetry/
-tag_name: poetry
+title: Research
+permalink: /research/
+tag_name: research
 ---
 
 <div id="{{ page.tag_name }}-page">
