@@ -30,9 +30,14 @@ I have a vague recollection that there was an incident involving a sudden trip t
 
 > "Go back. What was must never be"—Alan Garner, *Thursbitch*, 2003
 
+</div>
+
+<div style="text-align: left; margin-top: 40px;">
+
 vimeo: [simon bradley](https://vimeo.com/user6604380)  
 insta/threads: [@simonbrdly](https://www.instagram.com/simonbrdly)  
-bandcamp: [simonbradley](https://simonbradley.bandcamp.com/)  
+bandcamp: [simonbradley](https://simonbradley.bandcamp.com/)
+
 collaborations:  
 vimeo: [ArtCouple](https://vimeo.com/user127952551)  
 bandcamp: [ESS<>GEE](https://essgee1.bandcamp.com/)
