@@ -25,7 +25,7 @@ permalink: /animation/
         {% endfor %}
       </div>
       
-      <div class="post-meta">{{ post.date | "%d %b %Y" }}</div>
+      <div class="post-meta">{{ post.date | date: "%d %b %Y" }}</div>
       
       <p class="post-excerpt">{{ post.excerpt | strip_html | truncatewords: 25 }}</p>
     </a>
