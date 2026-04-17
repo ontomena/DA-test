@@ -15,6 +15,10 @@ category_name: categoryname
   contains name — so a post with category "sound" and tag "word" 
   appears on BOTH /sound/ AND /word/, giving cross-section visibility.
   
+  The nil-safe query handles the case where a category/tag doesn't
+  yet appear on any posts — renders an empty grid rather than 
+  crashing the build.
+  
   To create a new category page:
     1. Replace "Categoryname" (capitalised) with the capitalised name
        (e.g. "Photography").

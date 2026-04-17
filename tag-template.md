@@ -12,14 +12,15 @@ tag_name: tagname
   (e.g. album, poetry, projects, research, performance).
   Tags are many-per-post, whereas categories are one-per-post.
   
+  The nil-safe query below handles the case where the tag
+  doesn't yet appear on any posts — renders an empty grid
+  rather than crashing the build.
+  
   To create a new tag page:
     1. Replace "Tagname" (capitalised) with the capitalised tag name.
     2. Replace "tagname" (lowercase, two occurrences) with the lowercase
        tag name.
     3. Save as <lowercase-name>.md in the repo root.
-  
-  The tag will show up on posts automatically once posts are tagged
-  with it in their front matter.
   
   Nothing below this front matter needs changing.
 {% endcomment %}
@@ -28,7 +29,10 @@ tag_name: tagname
 <h1>{{ page.tag_name | capitalize }}</h1>
 
 <div class="posts-grid">
-  {% assign all_posts = site.tags[page.tag_name] | sort: 'date' | reverse %}
+  {% assign raw_posts = site.tags[page.tag_name] %}
+  {% assign all_posts = "" | split: "," %}
+  {% if raw_posts %}{% assign all_posts = raw_posts | sort: 'date' | reverse %}{% endif %}
+
   {% for post in all_posts %}
     <a href="{{ post.url | relative_url }}" class="post-card">
       {% if post.image %}

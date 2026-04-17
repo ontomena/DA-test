@@ -9,7 +9,10 @@ tag_name: album
 <h1>{{ page.tag_name | capitalize }}</h1>
 
 <div class="posts-grid">
-  {% assign all_posts = site.tags[page.tag_name] | sort: 'date' | reverse %}
+  {% assign raw_posts = site.tags[page.tag_name] %}
+  {% assign all_posts = "" | split: "," %}
+  {% if raw_posts %}{% assign all_posts = raw_posts | sort: 'date' | reverse %}{% endif %}
+
   {% for post in all_posts %}
     <a href="{{ post.url | relative_url }}" class="post-card">
       {% if post.image %}
