@@ -21,7 +21,7 @@ permalink: /contact/
 
 <p>Get notified of new posts via RSS:</p>
 
-<p><a href="/feed.xml" style="display: inline-block; padding: 8px 16px; background-color: #4a7c9e; color: #fff; text-decoration: none; border-radius: 4px; margin: 8px 0 15px 0; font-size: 0.9em;">Subscribe via RSS</a></p>
+<p><a href="{{ '/feed.xml' | relative_url }}"  style="display: inline-block; padding: 8px 16px; background-color: #4a7c9e; color: #fff; text-decoration: none; border-radius: 4px; margin: 8px 0 15px 0; font-size: 0.9em;">Subscribe via RSS</a></p>
 
 <p>Or via email through <a href="https://buttondown.email/">Buttondown</a> (privacy-focused, no tracking):</p>
 
