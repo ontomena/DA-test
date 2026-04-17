@@ -13,17 +13,21 @@ layout: default
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
     <div class="post-meta">
-      <span class="post-categories">
-        {% for category in page.categories %}
-          {% assign cat_slug = category | downcase %}
-          {% if forloop.first %}
-            <a href="{{ cat_slug | prepend: '/' | append: '/' | relative_url }}">{{ category | capitalize }}</a>
-          {% else %}
-            <a href="{{ cat_slug | prepend: '/' | append: '/' | relative_url }}">{{ category | downcase }}</a>
-          {% endif %}{% unless forloop.last %}, {% endunless %}
-        {% endfor %}
-      </span>
-      <span> · {{ page.date | date: "%d %b %Y" }}</span>
+      {% if page.categories.size > 0 %}
+        {% assign cat = page.categories | first | downcase %}
+        <div class="post-categories">
+          <a href="{{ cat | prepend: '/' | append: '/' | relative_url }}">{{ cat | capitalize }}</a>
+        </div>
+      {% endif %}
+      {% if page.tags.size > 0 %}
+        <div class="post-categories">
+          {% for tag in page.tags %}
+            {% assign tag_slug = tag | downcase %}
+            <a href="{{ tag_slug | prepend: '/' | append: '/' | relative_url }}">{{ tag_slug }}</a>{% unless forloop.last %}, {% endunless %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      <div class="post-categories"><span style="color: #666;">{{ page.date | date: "%d %b %Y" }}</span></div>
     </div>
   </header>
 
