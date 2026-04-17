@@ -27,15 +27,13 @@ E: bradleysimon [at] hotmail dot com
   target="popupwindow"
   onsubmit="window.open('https://buttondown.email/ontomena', 'popupwindow')"
   class="embeddable-buttondown-form"
-  style="margin-bottom: 18px;"
+  style="margin-bottom: 14px;"
 >
   <input type="email" name="email" id="bd-email" placeholder="your@email.com" required style="padding: 7px 10px; width: 220px; font-size: 0.9em;" />
   <input type="submit" value="Subscribe" style="padding: 7px 16px; background-color: #4a7c9e; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-size: 0.9em;" />
 </form>
 
-<p style="margin-bottom: 8px;">Or subscribe via RSS:</p>
-
-<p style="margin-bottom: 0;"><a href="{{ '/feed.xml' | relative_url }}" style="display: inline-block; padding: 7px 16px; background-color: #4a7c9e; color: #fff; text-decoration: none; border-radius: 4px; font-size: 0.9em;">Subscribe via RSS</a></p>
+<p style="margin-bottom: 0;"><a href="{{ '/feed.xml' | relative_url }}" style="display: inline-block; padding: 7px 16px; background-color: #4a7c9e; color: #fff; text-decoration: none; border-radius: 4px; font-size: 0.9em;">RSS</a></p>
 
 <hr style="margin: 25px 0; border: none; border-top: 1px solid #e0e0e0;">
 
