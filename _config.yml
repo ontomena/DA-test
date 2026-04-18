@@ -1,7 +1,10 @@
 # Site settings
 title: DisplacementActivities
-description: Sound, text, performance and archive
-url: "https://ontomena.github.io"
+description: Simon Bradley's sound, word and video work
+url: "https://www.displacementactivities.org"
+
+plugins:
+  - jekyll-feed
 
 # Build settings
 markdown: kramdown
