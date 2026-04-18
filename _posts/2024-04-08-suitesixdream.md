@@ -3,7 +3,7 @@ layout: post
 title: "suite six dream"
 date: 2024-04-08
 categories: [sound]
-tags: [album, music, word, poetry, performance]
+tags: [album, music, poetry, performance]
 image: /assets/images/suitesixdream-thumb.jpg
 excerpt: "Brief description of the post"
 ---

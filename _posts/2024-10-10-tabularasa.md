@@ -3,7 +3,7 @@ layout: post
 title: "tabula rasa"
 date: 2024-10-10
 categories: [video]
-tags: [word, poetry, sound, music, animation]
+tags: [poetry, music, animation]
 image: /assets/images/tabularasa-thumb.jpg
 excerpt: "Brief description of the post"
 ---

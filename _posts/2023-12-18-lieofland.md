@@ -3,7 +3,7 @@ layout: post
 title: "lie of the land"
 date: 2023-12-18
 categories: [word]
-tags: [poetry, sound, video, archive]
+tags: [poetry]
 image: /assets/images/lieoftheland-thumb.jpg
 excerpt: "Brief description of the post"
 ---

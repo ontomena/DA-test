@@ -3,7 +3,7 @@ layout: post
 title: "border guide"
 date: 2024-02-06
 categories: [video]
-tags: [animation, word]
+tags: [animation]
 image: /assets/images/borderguide-thumb.jpg
 excerpt: "Brief description of the post"
 ---

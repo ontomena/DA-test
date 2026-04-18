@@ -3,7 +3,7 @@ layout: post
 title: "workington piano"
 date: 2023-06-28
 categories: [sound]
-tags: [music, album]
+tags: [music]
 image: /assets/images/workingtonpiano-thumb.jpg
 excerpt: "Brief description of the post"
 ---
