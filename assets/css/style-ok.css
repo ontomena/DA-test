@@ -397,10 +397,3 @@ footer {
     font-size: 1.6em;
   }
 }
-
-/* DIAGNOSTIC — forcibly unstick tag/date block on post pages */
-.post-header,
-.post-meta,
-.post-header .post-categories {
-  position: static !important;
-}
