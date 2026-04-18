@@ -57,7 +57,6 @@ header.scrolled {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-  position: relative;
 }
 
 .site-title {
@@ -71,15 +70,6 @@ header.scrolled {
 .site-title a:visited {
   color: var(--text-primary);
   text-decoration: none;
-}
-
-/* Hamburger toggle - hidden by default (desktop) */
-.nav-toggle {
-  display: none;
-}
-
-.nav-toggle-label {
-  display: none;
 }
 
 .site-header-image {
@@ -394,93 +384,21 @@ footer {
     gap: 30px;
   }
   
-  header {
-    padding: 15px 0 12px;
-  }
-
-  /* Show hamburger label (3 bars), top-right of header */
-  .nav-toggle-label {
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 22px;
-    cursor: pointer;
-    z-index: 1001;
-  }
-
-  .nav-toggle-label span {
-    display: block;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--text-primary);
-    transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
-  }
-
-  .nav-toggle-label span:nth-child(1) { top: 3px; }
-  .nav-toggle-label span:nth-child(2) { top: 10px; }
-  .nav-toggle-label span:nth-child(3) { top: 17px; }
-
-  /* Hamburger animates to X when menu is open */
-  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
-    top: 10px;
-    transform: rotate(45deg);
-  }
-  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(2) {
-    opacity: 0;
-  }
-  .nav-toggle:checked ~ .nav-toggle-label span:nth-child(3) {
-    top: 10px;
-    transform: rotate(-45deg);
-  }
-
-  /* Collapse nav by default on mobile; keep sticky + underneath header */
-  nav {
-    max-height: 0;
-    overflow: hidden;
-    padding: 0 20px;
-    margin-bottom: 0;
-    border-bottom: none;
-    transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease, border-color 0.3s ease;
-  }
-
-  /* When toggle is checked, expand the nav inline */
-  body:has(.nav-toggle:checked) nav {
-    max-height: 400px;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--border-light);
-  }
-
   nav ul {
     flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
+    gap: 15px;
   }
-
-  /* Remove the dot separators on mobile (they don't make sense stacked) */
-  nav li:not(:last-child)::after {
-    content: "";
-    margin: 0;
+  
+  header {
+    padding: 30px 0 15px;
   }
-
-  nav a,
-  nav a:visited {
-    font-size: 1em;
-    padding: 4px 0;
-    display: block;
-  }
-
+  
   .post-title {
     font-size: 1.6em;
   }
 }
 
-/* Ensure post-meta doesn't pick up positioning from elsewhere */
+/* DIAGNOSTIC — forcibly unstick tag/date block on post pages */
 .post-header,
 .post-meta,
 .post-header .post-categories {
