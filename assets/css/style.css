@@ -398,6 +398,18 @@ footer {
     padding: 15px 0 12px;
   }
 
+  /* Shrink title on mobile + reserve space for hamburger on the right */
+  .site-title {
+    font-size: 1.5em;
+    padding-right: 50px;
+  }
+
+  /* Shorter header image on mobile */
+  .site-header-image {
+    height: 90px;
+    margin: 6px 0;
+  }
+
   /* Show hamburger label (3 bars), top-right of header */
   .nav-toggle-label {
     display: block;
