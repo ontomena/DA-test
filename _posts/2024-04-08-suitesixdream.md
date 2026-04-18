@@ -5,7 +5,7 @@ date: 2024-04-08
 categories: [sound]
 tags: [album, music, poetry, performance]
 image: /assets/images/suitesixdream-thumb.jpg
-excerpt: "Brief description of the post"
+excerpt: "An old sound work that combined improv with structure. There is a booklet, a video of a pilot performance, and the tracks appear on Bandcamp."
 ---
 
 

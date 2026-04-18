@@ -5,7 +5,7 @@ date: 2023-06-28
 categories: [sound]
 tags: [music]
 image: /assets/images/workingtonpiano-thumb.jpg
-excerpt: "Brief description of the post"
+excerpt: "This provides a video of a sound piece made from an abandoned piano"
 ---
 
 <iframe src="https://player.vimeo.com/video/840240279?h=683b023f13" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>

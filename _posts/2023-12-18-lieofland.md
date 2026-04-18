@@ -5,7 +5,7 @@ date: 2023-12-18
 categories: [word]
 tags: [poetry]
 image: /assets/images/lieoftheland-thumb.jpg
-excerpt: "Brief description of the post"
+excerpt: "This is an old text that came from the workings towards Mardship Bow, a novel based on a walk from Leeds to Halifax."
 ---
 
 <iframe src="https://player.vimeo.com/video/895909932?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" title="Lie of the Land #1"></iframe>

@@ -5,7 +5,7 @@ date: 2024-02-06
 categories: [video]
 tags: [animation]
 image: /assets/images/borderguide-thumb.jpg
-excerpt: "Brief description of the post"
+excerpt: "This is a video animation illustrating a frustration with the ongoing plight of humans searching for somewhere to live. Anywhere."
 ---
 
 

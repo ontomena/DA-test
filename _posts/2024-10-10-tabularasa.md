@@ -5,7 +5,7 @@ date: 2024-10-10
 categories: [video]
 tags: [poetry, music, animation]
 image: /assets/images/tabularasa-thumb.jpg
-excerpt: "Brief description of the post"
+excerpt: "An ongoing theme that hasn't quite got there yet. This combines a poem with some oscillator work."
 ---
 
 
