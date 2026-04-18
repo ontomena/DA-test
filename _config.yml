@@ -1,7 +1,6 @@
 # Site settings
 title: DisplacementActivities
 description: Sound, text, performance and archive
-baseurl: "/DA-test"
 url: "https://ontomena.github.io"
 
 # Build settings
