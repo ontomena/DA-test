@@ -9,7 +9,7 @@ permalink: /contact/
 
 <div class="home-content" markdown="1">
 
-DisplacementActivities is the site according to Simon Bradley, combining archives with new material. I work with sound mainly, one way or another: oral history, installation, performance, locative media. I like to find ways to bring sound into being, often from apparent silence—–and vice versa.
+DisplacementActivities is the site according to Simon Bradley, combining archives with new material. I work with sound mainly, one way or another: oral history, installation, performance, locative media. I like to find ways to bring sound to experience, often from apparent silence—–and vice versa.
 
 Email: bradleysimon hotmail dot com
 
