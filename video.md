@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Video
+title: video
 permalink: /video/
 category_name: video
 ---

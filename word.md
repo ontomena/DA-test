@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Word
+title: word
 permalink: /word/
 category_name: word
 ---

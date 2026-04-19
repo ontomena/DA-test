@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Music
+title: music
 permalink: /music/
 tag_name: music
 ---

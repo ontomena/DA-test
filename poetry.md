@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Poetry
+title: poetry
 permalink: /poetry/
 tag_name: poetry
 ---

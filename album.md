@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Album
+title: album
 permalink: /album/
 tag_name: album
 ---

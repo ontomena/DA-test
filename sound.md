@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Sound
+title: sound
 permalink: /sound/
 category_name: sound
 ---

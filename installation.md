@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Installation
+title: installation
 permalink: /installation/
 tag_name: installation
 ---

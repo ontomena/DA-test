@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Animation
+title: animation
 permalink: /animation/
 tag_name: animation
 ---

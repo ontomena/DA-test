@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Performance
+title: performance
 permalink: /performance/
 tag_name: performance
 ---
