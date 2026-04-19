@@ -7,8 +7,6 @@ tags: [album, music, poetry, performance]
 image: /assets/images/suitesixdream-thumb.jpg
 excerpt: "An old sound work that combined improv with structure. There is a booklet, a video of a pilot performance, and the tracks appear on Bandcamp."
 ---
-
-
 <p align="center"><img src="{{ '/assets/images/suitesix640.jpg' | relative_url }}" alt="Cover"></p>
 
 
