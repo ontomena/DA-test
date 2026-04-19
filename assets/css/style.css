@@ -37,9 +37,10 @@ a:hover {
 
 /* Header */
 header {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px 0 10px;
   border-bottom: 1px solid var(--border-light);
-  margin-bottom: 0;
   font-family: var(--font-sans);
   position: sticky;
   top: 0;
