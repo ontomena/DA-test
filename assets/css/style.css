@@ -267,6 +267,7 @@ h1 {
 .post-content {
   font-size: 1.05em;
   line-height: 1.8;
+  max-width: 800px;
   hyphens: auto;
 }
 
@@ -290,8 +291,8 @@ h1 {
   font-size: 1.05em;
   line-height: 1.8;
   max-width: 800px;
-  text-align: left;
-  hyphens: manual;
+  text-align: justify;
+  hyphens: auto;
 }
 
 .home-content .site-header-image {
