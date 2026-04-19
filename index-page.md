@@ -21,7 +21,8 @@ permalink: /index-page/
             <span class="index-meta">
               ({{ post.date | date: "%Y" }})
               {% if post.categories.size > 0 %}
-                — {{ post.categories | first | capitalize }}{% if post.tags.size > 0 %}, {% for tag in post.tags %}{{ tag | downcase }}{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}
+                {%- assign cat = post.categories | first | downcase -%}
+                — <a href="{{ cat | prepend: '/' | append: '/' | relative_url }}">{{ cat | capitalize }}</a>{% if post.tags and post.tags.size > 0 %}, {% for tag in post.tags %}{%- assign tag_slug = tag | downcase -%}<a href="{{ tag_slug | prepend: '/' | append: '/' | relative_url }}">{{ tag_slug }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}
               {% endif %}
             </span>
           </li>
