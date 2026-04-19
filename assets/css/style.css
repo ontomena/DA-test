@@ -290,8 +290,8 @@ h1 {
   font-size: 1.05em;
   line-height: 1.8;
   max-width: 800px;
-  text-align: justify;
-  hyphens: auto;
+  text-align: left;
+  hyphens: manual;
 }
 
 .home-content .site-header-image {
