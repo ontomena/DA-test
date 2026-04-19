@@ -6,7 +6,7 @@ category_name: video
 ---
 
 <div id="{{ page.category_name }}-page">
-<h1>{{ page.category_name | capitalize }}</h1>
+<h1>{{ page.category_name }}</h1>
 
 <div class="posts-grid">
   {% assign cat_posts = site.categories[page.category_name] %}

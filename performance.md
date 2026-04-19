@@ -6,7 +6,7 @@ tag_name: performance
 ---
 
 <div id="{{ page.tag_name }}-page">
-<h1>{{ page.tag_name | capitalize }}</h1>
+<h1>{{ page.tag_name }}</h1>
 
 <div class="posts-grid">
   {% assign raw_posts = site.tags[page.tag_name] %}
