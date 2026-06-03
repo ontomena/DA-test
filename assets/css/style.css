@@ -506,3 +506,15 @@ footer {
 .post-header .post-categories {
   position: static !important;
 }
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.download-btn:hover {
+  text-decoration: underline;
+}

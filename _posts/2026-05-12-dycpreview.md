@@ -27,7 +27,7 @@ Writing this up as we speak...
 
 
 
-
+<a href="/assets/pdf/ImprovScore_SBradley.pdf" class="download-btn">&#8595; download pdf</a>
 # Heading
 *this ital***this bold**
 1. item
