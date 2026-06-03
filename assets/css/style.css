@@ -198,6 +198,12 @@ h1 {
   object-fit: cover;
   margin-bottom: 15px;
   background: #f5f5f5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-card:hover .post-thumbnail {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(74, 124, 158, 0.6);
 }
 
 .post-card h2 {
@@ -499,12 +505,4 @@ footer {
 .post-meta,
 .post-header .post-categories {
   position: static !important;
-}
-.post-content a img {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.post-content a img:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 12px rgba(74, 124, 158, 0.6);
 }
