@@ -18,9 +18,8 @@ But... now it is possible to bring such things back from the dead. Here's how I 
 - Extracted the assets — carved the 12 MP3 samples and 6 bitmap key graphics out as open-format files.
 - Wrapped it in Ruffle — an open-source Flash Player emulator compiled to WebAssembly, self-hosted from npm, so the original SWF runs byte-for-byte faithful in any modern browser with no plugin and nothing 'phoning home', as they used to say.
 - Rebuilt the page — modernised the old Dreamweaver HTML (stripping the dead MM_ rollover scripts and the <object>/<embed> classid incantation) into clean present-day markup, with a brand new hand-lettered banner replacing the original.
- <div style="margin-top: 2rem;"></div>
-Behold, the  
-<div style="margin-bottom: 0;">
-# [XYBERPHON](https://www.displacementactivities.org/xyberphon/)
-</div>
+<div style="margin-top: 2rem;"></div>
+Behold, the...
+
+<h1 style="margin-bottom: 0;"><a href="https://www.displacementactivities.org/xyberphon/">XYBERPHON</a></h1>
 ...go on, click it!
