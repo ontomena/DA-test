@@ -19,7 +19,6 @@ But... now it is possible to bring such things back from the dead. Here's how I 
 - Wrapped it in Ruffle — an open-source Flash Player emulator compiled to WebAssembly, self-hosted from npm, so the original SWF runs byte-for-byte faithful in any modern browser with no plugin and nothing 'phoning home', as they used to say.
 - Rebuilt the page — modernised the old Dreamweaver HTML (stripping the dead MM_ rollover scripts and the <object>/<embed> classid incantation) into clean present-day markup, with a brand new hand-lettered banner replacing the original.
   
-
-Behold, the 
-# [XYBERPHON](https://www.displacementactivities.org/xyberphon/)
+Behold, the  
+# [XYBERPHON](https://www.displacementactivities.org/xyberphon/)  
 ...go on, click it!
