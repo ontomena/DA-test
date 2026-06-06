@@ -7,12 +7,10 @@ tags: [projects, research]
 image: /assets/images/MagnetOpusThumb.jpg
 excerpt: "This is the final report on the Arts Council funded DYCP project I carried out from April 2025 to May 2026--Data-driven Ambisonics: using geomagnetic data in sound-based performance and installation"
 ---
-
-the story… tell it like a story - what was fascinating… why - questions and finding out anwers etc very simpole very straightforwatrd…
+This is gradually formulating 
+the story…what was fascinating… why - questions and finding out answers etc very simple very straightforward…
 
 In November 2022, UK geospatial history was made as all three 'norths' (magnetic, true and grid) aligned and met at a point in Langton Matravers in Dorset, for the first time. Since then the alignment has moved northwards up the agonic line towards Scotland. In December 2026, the conjunction will finally leave the mainland at Fraserburgh.
-
-
 
 
 Compositional params
