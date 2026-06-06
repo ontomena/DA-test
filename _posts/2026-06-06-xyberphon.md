@@ -21,5 +21,5 @@ But... now it is possible to bring such things back from the dead. Here's how I 
 <div style="margin-top: 2rem;"></div>
 Behold, the
 
-<h1 style="margin-top: 0; margin-bottom: 0;"><a href="https://www.displacementactivities.org/xyberphon/">XYBERPHON</a></h1>
+<h1 style="margin-top: 0 !important; margin-bottom: 0 !important;"><a href="https://www.displacementactivities.org/xyberphon/">XYBERPHON</a></h1>
 ...go on, click it!
