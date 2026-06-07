@@ -9,9 +9,9 @@ excerpt: "A tuneful resurrection from the past web archives"
 ---
 In the misty days of 1999, or thereabouts, I used to spend a lot of time messing about with tools like Dreamweaver and Flash---a great pairing for creating loads of outlandish web elements back in the day. 
 
-One of the things I came up with that seemed to go down pretty well at the time was the xyberphon. It's been a while since the .swf files output by Flash stopped working (2020) and gradually the whole Macromedia culture dispersed...
+One of the things I came up with that seemed to go down pretty well was the xyberphon. It was a simple instrument drawn from samples I made of an Indonesian metallophone (saron) that Phil Moody gave me one birthday. 
 
-But... now it is possible to bring such things back from the dead. Here's how I did it--with a little bit of help from Claude ;-)
+The .swf files output by Flash gradually lost support and finally died in 2020 taking with them the whole Macromedia communit that had grown around them. But... now it is possible to bring these things back! Here's how I did it--with a little bit of help from Claude ;-)
 
 - Unpacked the SWF — parsed the binary format directly to inventory exactly what was inside the original (tag types, stage dimensions, audio format, embedded assets).
 - Extracted the assets — carved the 12 MP3 samples and 6 bitmap key graphics out as open-format files.
