@@ -49,6 +49,17 @@ William Brown (BGS)
 …and a big thank you to Glenn Boulter, Amy Stretch Parker, and Andrew Deakin at [Full of Noises](https://www.fonfestival.org/)
 
 
+<div style="text-align: left; margin-top: 40px;" markdown="1">
+
+vimeo: [simon bradley](https://vimeo.com/user6604380)  
+insta/threads: [@simonbrdly](https://www.instagram.com/simonbrdly)  
+bandcamp: [simonbradley](https://simonbradley.bandcamp.com/)
+
+
+<p align="center"><img src="https://www.artscouncil.org.uk/sites/default/files/download-file/grant_jpeg_black.jpg" alt="Arts Council Logo" style="max-width: 300px;"></p>
+
+</div>
+
 
 
 

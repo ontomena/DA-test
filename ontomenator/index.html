@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ontomenator v20 — A Conceptual Mapping</title>
+<title>Ontomenator v21b — A Conceptual Mapping</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
 
@@ -146,6 +146,8 @@
 
   /* Sidebar */
   #sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background: var(--sidebar-bg); border-left: 1px solid var(--sidebar-border); z-index: 3000; transition: right 0.3s ease; display: flex; flex-direction: column; }
+  .sidebar-x-close { background: none; border: none; color: var(--text-dim); font-size: 22px; line-height: 1; cursor: pointer; padding: 4px; flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.15s, color 0.15s; }
+  .sidebar-x-close:hover { background: rgba(196,149,106,0.15); color: var(--accent-bright); }
   #sidebar.open { right: 0; }
   #sidebar-header { padding: 20px 18px 14px; border-bottom: 1px solid var(--sidebar-border); display: flex; justify-content: space-between; align-items: center; }
   #sidebar-header h2 { font-size: 15px; font-weight: 600; color: var(--text-bright); }
@@ -158,7 +160,25 @@
   .node-selected-pulse { animation: node-pulse-ring 0.9s ease-out forwards; }
   .node-selected { box-shadow: 0 0 8px 3px rgba(196,149,106,0.35), 0 0 20px 0px rgba(196,149,106,0.15); }
 
-  /* Aspect editor */
+  /* Grouped controls dropdowns */
+  .ctrl-group { position: relative; display: inline-block; }
+  .ctrl-dropdown { display: none; position: absolute; bottom: calc(100% + 6px); left: 0; background: var(--bg-reading); border: 1px solid var(--accent-dim); border-radius: 7px; padding: 6px; min-width: 150px; z-index: 9000; box-shadow: 0 4px 24px rgba(0,0,0,0.5); }
+  .ctrl-dropdown.open { display: block; }
+  .ctrl-dropdown button { display: block; width: 100%; text-align: left; padding: 7px 12px; margin-bottom: 2px; background: none; border: none; color: var(--text); font-family: 'DM Mono','JetBrains Mono',monospace; font-size: 11px; cursor: pointer; border-radius: 4px; }
+  .ctrl-dropdown button:hover { background: rgba(196,149,106,0.12); color: var(--accent-bright); }
+  .ctrl-dropdown .dd-divider { height: 1px; background: var(--rule); margin: 4px 0; }
+  #controls button.active-group { color: var(--accent-bright); }
+  /* Introduction overlay */
+  #intro-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:8000; align-items:center; justify-content:center; }
+  #intro-overlay.visible { display:flex; }
+  #intro-panel { background:var(--bg-reading); border:1px solid var(--accent-dim); border-radius:12px; width:min(680px,90vw); max-height:80vh; overflow-y:auto; padding:36px 40px 28px; position:relative; }
+  #intro-panel h2 { font-size:20px; font-weight:700; color:var(--text-bright); margin-bottom:20px; }
+  .intro-view-content { font-size:14px; line-height:1.7; color:var(--text); }
+  .intro-view-content p { margin-bottom:12px; }
+  .intro-toolbar { margin-top:20px; display:flex; gap:10px; }
+  /* Animated tour toggle */
+  #btn-anim-tour { border: 1px solid var(--rule) !important; }
+  #btn-anim-tour.anim-active { color: var(--accent-bright) !important; border-color: var(--accent) !important; }
   .ed-aspects-section { margin-top:20px; border-top:1px solid var(--rule); padding-top:16px; }
   .ed-aspects-section label { font-size:10px; font-family:'DM Mono','JetBrains Mono',monospace; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim); display:block; margin-bottom:10px; }
   .ed-aspects-empty { font-size:12px; color:var(--text-dim); font-style:italic; padding:8px 0; }
@@ -173,6 +193,8 @@
   .ed-add-aspect-btn:hover { background:rgba(196,149,106,0.15); }
   .ed-back-btn { font-size:12px; font-family:'DM Mono','JetBrains Mono',monospace; color:var(--accent); cursor:pointer; margin-bottom:16px; display:inline-block; padding:5px 0; }
   .ed-back-btn:hover { color:var(--accent-bright); }
+  @keyframes rp-fade-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  #reading-overlay.visible #reading-panel { animation: rp-fade-in 0.7s ease-out; }
   .route-item .route-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-dim); min-width: 24px; }
   .route-item .route-label { flex: 1; cursor: pointer; }
   .route-item .rl-title { font-size: 14px; color: var(--text-bright); font-weight: 600; }
@@ -350,19 +372,19 @@
   <div id="search-count"></div>
   <div id="nav-cluster">
     <button onclick="tourPrev()" title="previous node">‹ prev</button>
-    <button onclick="startTour()" title="tour the map">tour</button>
+    <button onclick="toggleSidebar()" id="btn-route" title="open route sidebar">route</button>
     <button onclick="tourNext()" title="next node">next ›</button>
     <button onclick="showShortcutsOverlay()" id="btn-key" title="keyboard shortcuts">?</button>
   </div>
 </div>
 
-<div id="canvas-container" style="cursor: grab;"><div id="canvas" style="transform: translate(-2416px, -2017px) scale(1);"><svg id="connections"><line x1="3285" y1="3177.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="3285" y1="3177.5" x2="3885" y2="3477.5"></line><line x1="2882.2089138391198" y1="3480.16498532215" x2="3885" y2="3477.5"></line><line x1="2882.2089138391198" y1="3480.16498532215" x2="3985" y2="2777.5"></line><line x1="3285" y1="3177.5" x2="3485" y2="3777.5"></line><line x1="3985" y1="2777.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="4605.272052789915" y1="2807.1920482519486" x2="4085" y2="3177.5"></line><line x1="4085" y1="3177.5" x2="3985" y2="2777.5"></line><line x1="3285" y1="3177.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3285" y1="3177.5" x2="2285" y2="3577.5"></line><line x1="2498.3249266107514" y1="3025.595836637435" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2498.3249266107514" y1="3025.595836637435" x2="3885" y2="3477.5"></line><line x1="2285" y1="3577.5" x2="3485" y2="3777.5"></line><line x1="3485" y1="3777.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2985" y1="2879" x2="3285" y2="3177.5"></line><line x1="2985" y1="2879" x2="3985" y2="2777.5"></line><line x1="2985" y1="4177.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2985" y1="4177.5" x2="3885" y2="3477.5"></line><line x1="2985" y1="4177.5" x2="3285" y2="3177.5"></line><line x1="2985" y1="4177.5" x2="3485" y2="3777.5"></line><line x1="2985" y1="4177.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3572" y1="2471.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="3572" y1="2471.5" x2="4085" y2="3177.5"></line><line x1="3572" y1="2471.5" x2="3985" y2="2777.5"></line><line x1="3572" y1="2471.5" x2="2285" y2="3577.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="3985" y2="2777.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="4085" y2="3177.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="3572" y2="2471.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="3485" y2="3777.5"></line><line x1="1985" y1="3077.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="1985" y1="3077.5" x2="2285" y2="3577.5"></line><line x1="1985" y1="3077.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="1985" y1="3077.5" x2="3985" y2="2777.5"></line><line x1="4585" y1="1977.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="4585" y1="1977.5" x2="3985" y2="2777.5"></line><line x1="4585" y1="1977.5" x2="3572" y2="2471.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3285" y2="3177.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3485" y2="3777.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3754.484223940718" y2="4199.186090113368"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="3285" y2="3177.5"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="2285" y2="3577.5"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="3485" y2="3777.5"></line><line x1="3285" y1="1577.5" x2="3285" y2="3177.5"></line><line x1="3285" y1="1577.5" x2="4585" y2="1977.5"></line><line x1="3285" y1="1577.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2685" y1="1789.5" x2="2985" y2="4177.5"></line><line x1="2685" y1="1789.5" x2="4585" y2="1977.5"></line><line x1="2685" y1="1789.5" x2="3754.484223940718" y2="4199.186090113368"></line><line x1="2685" y1="1789.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="2685" y1="1789.5" x2="2285" y2="3577.5"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="2685" y2="1789.5"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="2985" y2="4177.5"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="3572" y2="2471.5"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="3985" y2="2777.5"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="5219.007978118187" y2="2358.0302113560047"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="4585" y2="1977.5"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="4085" y2="3177.5"></line><line x1="3572" y1="2471.5" x2="2985" y2="4177.5"></line><line x1="3572" y1="2471.5" x2="3285" y2="3177.5"></line><line x1="3572" y1="2471.5" x2="3285" y2="1577.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="3985" y2="2777.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="5760.291154374201" y2="2915.863764235554"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="4985" y2="3202.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="3985" y2="2777.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="3885" y2="3477.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4985" y2="3202.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="1985" y2="3077.5"></line><line x1="4985" y1="3202.5" x2="3985" y2="2777.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="3885" y2="3477.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="2985" y2="4177.5"></line><line x1="3285" y1="1577.5" x2="3985" y2="2777.5"></line><line x1="3285" y1="1577.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4610" y2="3660.8333333333335"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="2985" y2="4177.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="1583.9245152050667" y2="3572.946739837896"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="1132.6008416113023" y2="2978.4927551953233"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="3485" y2="3777.5"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="2985" y2="4177.5"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="3285" y2="3177.5"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="3985" y2="2777.5"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="1132.6008416113023" y2="2978.4927551953233"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="2985" y2="4177.5"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="2285" y2="3577.5"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="3485" y2="3777.5"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="4085" y2="3177.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="2485" y2="3277.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="3572" y2="2471.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="4085" y2="3177.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="4610" y2="3660.8333333333335"></line><line x1="4610" y1="3660.8333333333335" x2="3985" y2="2777.5"></line><line x1="4610" y1="3660.8333333333335" x2="5219.007978118187" y2="2358.0302113560047"></line><line x1="4610" y1="3660.8333333333335" x2="4985" y2="3202.5"></line><line x1="4610" y1="3660.8333333333335" x2="2278.8462568509167" y2="4211.495170130216"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="3572" y2="2471.5"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="3985" y2="2777.5"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="3985" y2="2777.5"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="2985" y2="4177.5"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="2285" y2="3577.5"></line><line x1="2485" y1="3277.5" x2="2285" y2="3577.5"></line><line x1="2485" y1="3277.5" x2="3985" y2="2777.5"></line><line x1="2485" y1="3277.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="2485" y1="3277.5" x2="4610" y2="3660.8333333333335"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="3985" y2="2777.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4085" y2="3177.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4485" y2="1677.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="3572" y2="2471.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="3285" y2="1577.5"></line><line x1="4485" y1="1677.5" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="4485" y1="1677.5" x2="3572" y2="2471.5"></line><line x1="4485" y1="1677.5" x2="3814.3099592791514" y2="4785.589233446884"></line><line x1="4485" y1="1677.5" x2="1132.6008416113023" y2="2978.4927551953233"></line><line x1="4485" y1="1677.5" x2="1583.9245152050667" y2="3572.946739837896"></line><line x1="4485" y1="1677.5" x2="3485" y2="3777.5"></line><line x1="4485" y1="1677.5" x2="2798.538634498701" y2="4763.065839777692"></line><line x1="4485" y1="1677.5" x2="4257.885330020983" y2="2385.014040932756"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="2485" y2="3277.5"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="2285" y2="3577.5"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="3814.3099592791514" y2="4785.589233446884"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="3572" y2="2471.5"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="5219.007978118187" y2="2358.0302113560047"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3985" y2="2777.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="2278.8462568509167" y2="4211.495170130216"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="4585" y2="1977.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3285" y2="1577.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3885" y2="3477.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3285" y2="3177.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3785" y1="1877.5" x2="2985" y2="4177.5"></line><line x1="3785" y1="1877.5" x2="4085" y2="3177.5"></line><line x1="3785" y1="1877.5" x2="4937.363486547591" y2="1905.4727947210085"></line><line x1="3785" y1="1877.5" x2="4485" y2="1677.5"></line><line x1="3785" y1="1877.5" x2="3572" y2="2471.5"></line><line x1="3785" y1="1877.5" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3785" y1="1877.5" x2="2485" y2="3277.5"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="3985" y2="2777.5"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="4085" y2="3177.5"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="3572" y2="2471.5"></line><line x1="3136" y1="2391.5" x2="2685" y2="1789.5"></line><line x1="3136" y1="2391.5" x2="3985" y2="2777.5"></line><line x1="3136" y1="2391.5" x2="4585" y2="1977.5"></line><line x1="3136" y1="2391.5" x2="2985" y2="4177.5"></line><line x1="3136" y1="2391.5" x2="3754.484223940718" y2="4199.186090113368"></line><line x1="3136" y1="2391.5" x2="3796.0665423040123" y2="1369.8571240579322"></line><line x1="3136" y1="2391.5" x2="3285" y2="1577.5"></line><line x1="3136" y1="2391.5" x2="1985" y2="3077.5"></line><line x1="3136" y1="2391.5" x2="2653" y2="2480.5"></line><line x1="3136" y1="2391.5" x2="3285" y2="3177.5"></line><line x1="3136" y1="2391.5" x2="3572" y2="2471.5"></line><line x1="3136" y1="2391.5" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3136" y1="2391.5" x2="5219.007978118187" y2="2358.0302113560047"></line><line x1="3136" y1="2391.5" x2="2985" y2="2879"></line><line x1="3085" y1="1877.5" x2="1922.3927901830423" y2="2332.5500637184105"></line><line x1="3085" y1="1877.5" x2="3136" y2="2391.5"></line><line x1="3085" y1="1877.5" x2="2985" y2="2879"></line><line x1="3085" y1="1877.5" x2="2278.8462568509167" y2="4211.495170130216"></line><line x1="3085" y1="1877.5" x2="2798.538634498701" y2="4763.065839777692"></line><line x1="3085" y1="1877.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3136" y1="2391.5" x2="3085" y2="1877.5" class="route-line"></line><line x1="3085" y1="1877.5" x2="2653" y2="2480.5" class="route-line"></line><line x1="2653" y1="2480.5" x2="3985" y2="2777.5" class="route-line"></line><line x1="3985" y1="2777.5" x2="4605.272052789915" y2="2807.1920482519486" class="route-line"></line><line x1="4605.272052789915" y1="2807.1920482519486" x2="4085" y2="3177.5" class="route-line"></line><line x1="4085" y1="3177.5" x2="2882.2089138391198" y2="3480.16498532215" class="route-line"></line><line x1="2882.2089138391198" y1="3480.16498532215" x2="1922.3927901830423" y2="2332.5500637184105" class="route-line"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3885" y2="3477.5" class="route-line"></line><line x1="3885" y1="3477.5" x2="2985" y2="2879" class="route-line"></line><line x1="2985" y1="2879" x2="3285" y2="3177.5" class="route-line"></line><line x1="3285" y1="3177.5" x2="2498.3249266107514" y2="3025.595836637435" class="route-line"></line><line x1="2498.3249266107514" y1="3025.595836637435" x2="2285" y2="3577.5" class="route-line"></line><line x1="2285" y1="3577.5" x2="3485" y2="3777.5" class="route-line"></line><line x1="3485" y1="3777.5" x2="2985" y2="4177.5" class="route-line"></line><line x1="2985" y1="4177.5" x2="3572" y2="2471.5" class="route-line"></line><line x1="3572" y1="2471.5" x2="4309.167292762334" y2="3986.137490608565" class="route-line"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="1985" y2="3077.5" class="route-line"></line><line x1="1985" y1="3077.5" x2="4585" y2="1977.5" class="route-line"></line><line x1="4585" y1="1977.5" x2="2798.538634498701" y2="4763.065839777692" class="route-line"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3754.484223940718" y2="4199.186090113368" class="route-line"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="3285" y2="1577.5" class="route-line"></line><line x1="3285" y1="1577.5" x2="2685" y2="1789.5" class="route-line"></line><line x1="2685" y1="1789.5" x2="3796.0665423040123" y2="1369.8571240579322" class="route-line"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="5219.007978118187" y2="2358.0302113560047" class="route-line"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="5760.291154374201" y2="2915.863764235554" class="route-line"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4985" y2="3202.5" class="route-line"></line><line x1="4985" y1="3202.5" x2="4990.866957654035" y2="4206.126965517494" class="route-line"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="4225.2462464152295" y2="4521.219678320343" class="route-line"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="1583.9245152050667" y2="3572.946739837896" class="route-line"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="3814.3099592791514" y2="4785.589233446884" class="route-line"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="1132.6008416113023" y2="2978.4927551953233" class="route-line"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="4257.885330020983" y2="2385.014040932756" class="route-line"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="4610" y2="3660.8333333333335" class="route-line"></line><line x1="4610" y1="3660.8333333333335" x2="5569.520168322261" y2="3763.095653117195" class="route-line"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="2278.8462568509167" y2="4211.495170130216" class="route-line"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="2485" y2="3277.5" class="route-line"></line><line x1="2485" y1="3277.5" x2="4937.363486547591" y2="1905.4727947210085" class="route-line"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4485" y2="1677.5" class="route-line"></line><line x1="4485" y1="1677.5" x2="3785" y2="1877.5" class="route-line"></line><line x1="3785" y1="1877.5" x2="3264.3699317436235" y2="4784.441454997146" class="route-line"></line></svg><div class="node central" data-id="ontomena" style="left: 3051px; top: 2314px; border-left: 5px solid rgb(47, 86, 165);"><div class="node-category" style="color:hsl(220,55.9%,41.5%)">core concept</div><div class="node-title">Ontomena</div><div class="node-subtitle">being-as-it-shows-itself</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('ontomena')">+4</div></div><div class="node" data-id="panonticism" style="left: 3200px; top: 3100px; border-left: 5px solid rgb(194, 104, 39);"><div class="node-category" style="color:hsl(25,66.7%,45.7%)">ethics / practice</div><div class="node-title">Panonticism</div><div class="node-subtitle">liberating all the things</div></div><div class="node" data-id="aisthesis" style="left: 3900px; top: 2700px; border-left: 5px solid rgb(194, 104, 39);"><div class="node-category" style="color:hsl(25,66.7%,45.7%)">aesthetics / ethics</div><div class="node-title">Aisthesis / An-aisthesis</div><div class="node-subtitle">perception vs its closure</div></div><div class="node" data-id="whitehead" style="left: 2797.21px; top: 3402.66px; border-left: 5px solid rgb(57, 93, 164);"><div class="node-category" style="color:hsl(220,48.6%,43.3%)">philosophy / process</div><div class="node-title">Prehension</div><div class="node-subtitle">process, feeling, creative advance</div></div><div class="node" data-id="bergson" style="left: 3800px; top: 3400px; border-left: 5px solid rgb(56, 92, 164);"><div class="node-category" style="color:hsl(220,49.4%,43.1%)">philosophy / process</div><div class="node-title">Duration</div><div class="node-subtitle">durée, élan vital, becoming</div></div><div class="node" data-id="berkeley" style="left: 2568px; top: 2403px; border-left: 5px solid rgb(59, 94, 164);"><div class="node-category" style="color:hsl(220,47.3%,43.6%)">philosophy / epistemology</div><div class="node-title">Esse est Percipi</div><div class="node-subtitle">to be is to be perceived</div></div><div class="node" data-id="autocracy-inc" style="left: 4000px; top: 3100px; border-left: 5px solid rgb(188, 78, 72);"><div class="node-category" style="color:hsl(3,46.7%,51.0%)">political</div><div class="node-title">Autocracy Inc.</div><div class="node-subtitle">industrialised ontomenal management</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('autocracy-inc')">+1</div></div><div class="node" data-id="heidegger" style="left: 3000px; top: 1800px; border-left: 5px solid rgb(54, 91, 164);"><div class="node-category" style="color:hsl(220,50.3%,42.9%)">philosophy / ontology</div><div class="node-title">Aletheia</div><div class="node-subtitle">unconcealment — truth as disclosure</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('heidegger')">+1</div></div><div class="node" data-id="magnet-opus" style="left: 2413.32px; top: 2948.1px; border-left: 5px solid rgb(188, 108, 51);"><div class="node-category" style="color:hsl(25,57.1%,47.0%)">practice</div><div class="node-title">Magnet Opus</div><div class="node-subtitle">geomagnetic sonification</div></div><div class="node" data-id="mardship-bow" style="left: 2200px; top: 3500px; border-left: 5px solid rgb(188, 108, 51);"><div class="node-category" style="color:hsl(25,57.1%,47.0%)">practice</div><div class="node-title">Mardship Bow</div><div class="node-subtitle">the walk, Leeds–Halifax</div></div><div class="node" data-id="bioregion" style="left: 3400px; top: 3700px; border-left: 5px solid rgb(70, 130, 98);"><div class="node-category" style="color:hsl(148,30.1%,39.3%)">ecology / ethics</div><div class="node-title">Bioregional Ethics</div><div class="node-subtitle">place, vitalism, and the ethics of the local</div></div><div class="node" data-id="levinas" style="left: 2900px; top: 2800px; border-left: 5px solid rgb(59, 94, 164);"><div class="node-category" style="color:hsl(220,47.3%,43.6%)">philosophy / ethics</div><div class="node-title">The Face / The Flesh</div><div class="node-subtitle">ethical encounter and embodied perception</div></div><div class="node" data-id="aphanipoiesis" style="left: 2900px; top: 4100px; border-left: 5px solid rgb(66, 128, 95);"><div class="node-category" style="color:hsl(148,32.4%,38.0%)">philosophy / systems</div><div class="node-title">Aphanipoiesis</div><div class="node-subtitle">the unseen bringing-forth</div></div><div class="node" data-id="metabolic-panorama" style="left: 4224.17px; top: 3907.14px; border-left: 5px solid rgb(187, 79, 73);"><div class="node-category" style="color:hsl(3,45.8%,51.0%)">political / ecological</div><div class="node-title">Metabolic Panorama</div><div class="node-subtitle">the managed appearance of normality</div></div><div class="node" data-id="herzog" style="left: 1900px; top: 3000px; border-left: 5px solid rgb(189, 108, 49);"><div class="node-category" style="color:hsl(25,58.7%,46.8%)">aesthetics / practice</div><div class="node-title">Ecstatic Truth</div><div class="node-subtitle">fabrication as revelation</div></div><div class="node" data-id="edinburgh-ssk" style="left: 4500px; top: 1900px; border-left: 5px solid rgb(196, 151, 45);"><div class="node-category" style="color:hsl(42,62.6%,47.3%)">method / epistemology</div><div class="node-title">Anything Goes</div><div class="node-subtitle">against method — Feyerabend, Kuhn, and the strong programme</div></div><div class="node" data-id="assemblages" style="left: 3669.48px; top: 4115.19px; border-left: 5px solid rgb(198, 151, 42);"><div class="node-category" style="color:hsl(42,65.0%,47.0%)">method / epistemology</div><div class="node-title">Assemblages</div><div class="node-subtitle">actants, rhizomes, readymades — being as composition</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('assemblages')">+3</div></div><div class="node" data-id="critics" style="left: 3200px; top: 1500px; border-left: 5px solid rgb(195, 151, 47);"><div class="node-category" style="color:hsl(42,60.8%,47.5%)">critique</div><div class="node-title">Critics</div><div class="node-subtitle">objections and the pushback</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('critics')">+1</div></div><div class="node" data-id="abduction" style="left: 2600px; top: 1700px; border-left: 5px solid rgb(199, 151, 40);"><div class="node-category" style="color:hsl(42,66.8%,46.8%)">method / epistemology</div><div class="node-title">Abduction / Associative Method</div><div class="node-subtitle">the logic of creative inference</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('abduction')">+1</div></div><div class="node" data-id="platos-cave" style="left: 3711.07px; top: 1292.36px; border-left: 5px solid rgb(57, 93, 164);"><div class="node-category" style="color:hsl(220,48.6%,43.3%)">philosophy / epistemology</div><div class="node-title">Cave</div><div class="node-subtitle">managed appearance and the return</div></div><div class="node" data-id="symbol-metaphor" style="left: 5134.01px; top: 2276.03px; border-left: 5px solid rgb(198, 151, 42);"><div class="node-category" style="color:hsl(42,65.0%,47.0%)">aesthetics / method</div><div class="node-title">Symbol / Metaphor / Image</div><div class="node-subtitle">managed sign and ontomenal showing</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('symbol-metaphor')">+1</div></div><div class="node" data-id="dada-bunuel" style="left: 4900px; top: 3125px; border-left: 5px solid rgb(186, 110, 56);"><div class="node-category" style="color:hsl(25,53.4%,47.5%)">aesthetics / art</div><div class="node-title">Dada</div><div class="node-subtitle">nothing symbolises anything</div></div><div class="node" data-id="the-unclickable" style="left: 4905.87px; top: 4128.63px; border-left: 5px solid rgb(119, 82, 155);"><div class="node-category" style="color:hsl(270,31.0%,46.5%)">meta / reflexive</div><div class="node-title">The Unclickable</div><div class="node-subtitle">on reflexivity and strange loops</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('the-unclickable')">+1</div></div><div class="node" data-id="foucault-meninas" style="left: 4140.25px; top: 4443.72px; border-left: 5px solid rgb(65, 97, 163);"><div class="node-category" style="color:hsl(220,43.0%,44.6%)">philosophy / epistemology</div><div class="node-title">Foucault / Las Meninas</div><div class="node-subtitle">representing representation</div></div><div class="node" data-id="rebellion" style="left: 3487px; top: 2394px; border-left: 5px solid rgb(192, 72, 66);"><div class="node-category" style="color:hsl(3,50.2%,50.7%)">resistance / ethics</div><div class="node-title">Rebellion</div><div class="node-subtitle">the No that opens onto We</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('rebellion')">+5</div></div><div class="node" data-id="sordid-realism" style="left: 4520.27px; top: 2729.69px; border-left: 5px solid rgb(188, 78, 72);"><div class="node-category" style="color:hsl(3,46.7%,51.0%)">politics / aesthetics</div><div class="node-title">Sordid Realism</div><div class="node-subtitle">fabricated appearance and its refusal</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('sordid-realism')">+2</div></div><div class="node" data-id="magic-lantern" style="left: 5675.29px; top: 2838.36px; border-left: 5px solid rgb(187, 110, 54);"><div class="node-category" style="color:hsl(25,55.0%,47.3%)">aesthetics / memory</div><div class="node-title">Magic Lantern</div><div class="node-subtitle">projected light, living time, the past made present</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('magic-lantern')">+2</div></div><div class="node" data-id="vitalism" style="left: 2713.54px; top: 4685.57px; border-left: 5px solid rgb(65, 128, 94);"><div class="node-category" style="color:hsl(148,32.9%,37.7%)">philosophy / ecology</div><div class="node-title">Vitalism</div><div class="node-subtitle">the aliveness of matter — ancient and modern</div></div><div class="node" data-id="eco" style="left: 1498.92px; top: 3495.45px; border-left: 5px solid rgb(70, 130, 98);"><div class="node-category" style="color:hsl(148,30.1%,39.3%)">ecology / ethics</div><div class="node-title">Eco</div><div class="node-subtitle">deep ecology and the ecological self</div></div><div class="node" data-id="water" style="left: 3729.31px; top: 4708.09px; border-left: 5px solid rgb(48, 87, 165);"><div class="node-category" style="color:hsl(220,54.6%,41.8%)">threshold / element</div><div class="node-title">Water</div><div class="node-subtitle">the medium of perception and of life</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('water')">+1</div></div><div class="node" data-id="rubbish" style="left: 1047.6px; top: 2900.99px; border-left: 5px solid rgb(72, 131, 100);"><div class="node-category" style="color:hsl(148,29.0%,39.9%)">ecology / politics</div><div class="node-title">Rubbish</div><div class="node-subtitle">vibrant matter, toxic politics, what we put in the water</div></div><div class="node" data-id="situation" style="left: 4172.89px; top: 2307.51px; border-left: 5px solid rgb(187, 79, 73);"><div class="node-category" style="color:hsl(3,45.8%,51.0%)">politics / aesthetics</div><div class="node-title">Situation</div><div class="node-subtitle">the spectacle, the dérive, détournement</div></div><div class="node" data-id="dreams" style="left: 4525px; top: 3583.33px; border-left: 5px solid rgb(187, 110, 54);"><div class="node-category" style="color:hsl(25,55.0%,47.3%)">aesthetics / practice</div><div class="node-title">Dreams</div><div class="node-subtitle">reverie, the paranoiac method, and widened perception</div></div><div class="node" data-id="stet" style="left: 5484.52px; top: 3685.6px; border-left: 5px solid rgb(112, 67, 158);"><div class="node-category" style="color:hsl(270,40.1%,44.1%)">meta / ethics</div><div class="node-title">Stet</div><div class="node-subtitle">let it stand — that which refuses deletion</div></div><div class="node" data-id="anamnesis" style="left: 2193.85px; top: 4134px; border-left: 5px solid rgb(53, 90, 165);"><div class="node-category" style="color:hsl(220,51.6%,42.6%)">philosophy / memory</div><div class="node-title">Anamnesis</div><div class="node-subtitle">learning as recollection — knowledge already known</div></div><div class="node" data-id="walking" style="left: 2400px; top: 3200px; border-left: 5px solid rgb(188, 108, 51);"><div class="node-category" style="color:hsl(25,57.1%,47.0%)">practice / method</div><div class="node-title">Walking</div><div class="node-subtitle">thinking through the feet — from peripatetics to psychogeography</div></div><div class="node" data-id="homophily" style="left: 4852.36px; top: 1827.97px; border-left: 5px solid rgb(189, 76, 70);"><div class="node-category" style="color:hsl(3,47.6%,50.9%)">politics / epistemology</div><div class="node-title">Homophily</div><div class="node-subtitle">people like people like themselves</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('homophily')">+5</div></div><div class="node" data-id="real-economy" style="left: 4400px; top: 1600px; border-left: 5px solid rgb(191, 74, 68);"><div class="node-category" style="color:hsl(3,48.9%,50.8%)">politics / economics</div><div class="node-title">Real Economy</div><div class="node-subtitle">the economy as actually experienced</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('real-economy')">+5</div></div><div class="node" data-id="revolution" style="left: 3700px; top: 1800px; border-left: 5px solid rgb(191, 74, 68);"><div class="node-category" style="color:hsl(3,48.9%,50.8%)">politics / method</div><div class="node-title">Revolution</div><div class="node-subtitle">withdrawing consent, large and small</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('revolution')">+2</div></div><div class="node" data-id="rose" style="left: 3179.37px; top: 4700.44px; border-left: 5px solid rgb(68, 130, 97);"><div class="node-category" style="color:hsl(148,31.0%,38.8%)">symbol / practice / conflict</div><div class="node-title">Rose</div><div class="node-subtitle">sub rosa, conflict, resolution, the petal and the thorn</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('rose')">+3</div></div><div class="node" data-id="aufhebung" style="left: 1837.39px; top: 2255.05px; border-left: 5px solid rgb(54, 91, 164);"><div class="node-category" style="color:hsl(220,50.3%,42.9%)">philosophy / dialectic</div><div class="node-title">Aufhebung</div><div class="node-subtitle">sublation — cancel, preserve, lift up (Hegel)</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('aufhebung')">+1</div></div></div></div>
-<div id="preview-popup" class="" style="left: 815px; top: 297px;"><div style="font-size:10px;font-family:'DM Mono',monospace;color:hsl(220,55.9%,41.5%);margin-bottom:4px">core concept</div><strong style="font-size:15px;color:var(--text-bright)">Ontomena</strong><div style="font-size:11px;color:var(--text-dim);margin-bottom:8px">being-as-it-shows-itself</div><div style="font-size:13px;line-height:1.6;color:var(--text)">Difficult to say really... a feeling, an intuition about fundamental things. Ontomena came to me as a word in the 1990s, and has continued to inspire and torment.
-The word 'ontomena' is a neologism fu…</div></div>
+<div id="canvas-container" style="cursor: grab;"><div id="canvas" style="transform: translate(-2416px, -2017px) scale(1);"><svg id="connections"><line x1="3285" y1="3177.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="3285" y1="3177.5" x2="3885" y2="3477.5"></line><line x1="2882.2089138391198" y1="3480.16498532215" x2="3885" y2="3477.5"></line><line x1="2882.2089138391198" y1="3480.16498532215" x2="3985" y2="2777.5"></line><line x1="3285" y1="3177.5" x2="3485" y2="3777.5"></line><line x1="3985" y1="2777.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="4605.272052789915" y1="2807.1920482519486" x2="4085" y2="3177.5"></line><line x1="4085" y1="3177.5" x2="3985" y2="2777.5"></line><line x1="3285" y1="3177.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3285" y1="3177.5" x2="2285" y2="3577.5"></line><line x1="2498.3249266107514" y1="3025.595836637435" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2498.3249266107514" y1="3025.595836637435" x2="3885" y2="3477.5"></line><line x1="2285" y1="3577.5" x2="3485" y2="3777.5"></line><line x1="3485" y1="3777.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2985" y1="2879" x2="3285" y2="3177.5"></line><line x1="2985" y1="2879" x2="3985" y2="2777.5"></line><line x1="2985" y1="4177.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2985" y1="4177.5" x2="3885" y2="3477.5"></line><line x1="2985" y1="4177.5" x2="3285" y2="3177.5"></line><line x1="2985" y1="4177.5" x2="3485" y2="3777.5"></line><line x1="2985" y1="4177.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3572" y1="2471.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="3572" y1="2471.5" x2="4085" y2="3177.5"></line><line x1="3572" y1="2471.5" x2="3985" y2="2777.5"></line><line x1="3572" y1="2471.5" x2="2285" y2="3577.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="3985" y2="2777.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="4085" y2="3177.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="3572" y2="2471.5"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="3485" y2="3777.5"></line><line x1="1985" y1="3077.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="1985" y1="3077.5" x2="2285" y2="3577.5"></line><line x1="1985" y1="3077.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="1985" y1="3077.5" x2="3985" y2="2777.5"></line><line x1="4585" y1="1977.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="4585" y1="1977.5" x2="3985" y2="2777.5"></line><line x1="4585" y1="1977.5" x2="3572" y2="2471.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3285" y2="3177.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3485" y2="3777.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3754.484223940718" y2="4199.186090113368"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="3285" y2="3177.5"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="2285" y2="3577.5"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="3485" y2="3777.5"></line><line x1="3285" y1="1577.5" x2="3285" y2="3177.5"></line><line x1="3285" y1="1577.5" x2="4585" y2="1977.5"></line><line x1="3285" y1="1577.5" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="2685" y1="1789.5" x2="2985" y2="4177.5"></line><line x1="2685" y1="1789.5" x2="4585" y2="1977.5"></line><line x1="2685" y1="1789.5" x2="3754.484223940718" y2="4199.186090113368"></line><line x1="2685" y1="1789.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="2685" y1="1789.5" x2="2285" y2="3577.5"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="2685" y2="1789.5"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="2985" y2="4177.5"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="3572" y2="2471.5"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="3985" y2="2777.5"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="4585" y2="1977.5"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="4085" y2="3177.5"></line><line x1="3572" y1="2471.5" x2="2985" y2="4177.5"></line><line x1="3572" y1="2471.5" x2="3285" y2="3177.5"></line><line x1="3572" y1="2471.5" x2="3285" y2="1577.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="3985" y2="2777.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="3885" y2="3477.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4985" y2="3202.5"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="1985" y2="3077.5"></line><line x1="4985" y1="3202.5" x2="3985" y2="2777.5"></line><line x1="3285" y1="1577.5" x2="3985" y2="2777.5"></line><line x1="3285" y1="1577.5" x2="4605.272052789915" y2="2807.1920482519486"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4610" y2="3660.8333333333335"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="2985" y2="4177.5"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="1583.9245152050667" y2="3572.946739837896"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="1132.6008416113023" y2="2978.4927551953233"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="3485" y2="3777.5"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="2985" y2="4177.5"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="3285" y2="3177.5"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="3985" y2="2777.5"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="1132.6008416113023" y2="2978.4927551953233"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="2985" y2="4177.5"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="2285" y2="3577.5"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="3485" y2="3777.5"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="4085" y2="3177.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="2485" y2="3277.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="3572" y2="2471.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="4085" y2="3177.5"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="4610" y2="3660.8333333333335"></line><line x1="4610" y1="3660.8333333333335" x2="3985" y2="2777.5"></line><line x1="4610" y1="3660.8333333333335" x2="4985" y2="3202.5"></line><line x1="4610" y1="3660.8333333333335" x2="2278.8462568509167" y2="4211.495170130216"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="3572" y2="2471.5"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="3985" y2="2777.5"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="3985" y2="2777.5"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="2985" y2="4177.5"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="2285" y2="3577.5"></line><line x1="2485" y1="3277.5" x2="2285" y2="3577.5"></line><line x1="2485" y1="3277.5" x2="3985" y2="2777.5"></line><line x1="2485" y1="3277.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="2485" y1="3277.5" x2="4610" y2="3660.8333333333335"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="3985" y2="2777.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4085" y2="3177.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4485" y2="1677.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="3572" y2="2471.5"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="3285" y2="1577.5"></line><line x1="4485" y1="1677.5" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="4485" y1="1677.5" x2="3572" y2="2471.5"></line><line x1="4485" y1="1677.5" x2="3814.3099592791514" y2="4785.589233446884"></line><line x1="4485" y1="1677.5" x2="1132.6008416113023" y2="2978.4927551953233"></line><line x1="4485" y1="1677.5" x2="1583.9245152050667" y2="3572.946739837896"></line><line x1="4485" y1="1677.5" x2="3485" y2="3777.5"></line><line x1="4485" y1="1677.5" x2="2798.538634498701" y2="4763.065839777692"></line><line x1="4485" y1="1677.5" x2="4257.885330020983" y2="2385.014040932756"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="2485" y2="3277.5"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="2285" y2="3577.5"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="3814.3099592791514" y2="4785.589233446884"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3264.3699317436235" y1="4784.441454997146" x2="3572" y2="2471.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3985" y2="2777.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="2278.8462568509167" y2="4211.495170130216"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="4585" y2="1977.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3285" y2="1577.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3885" y2="3477.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3285" y2="3177.5"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="2882.2089138391198" y2="3480.16498532215"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3785" y1="1877.5" x2="2985" y2="4177.5"></line><line x1="3785" y1="1877.5" x2="4085" y2="3177.5"></line><line x1="3785" y1="1877.5" x2="4937.363486547591" y2="1905.4727947210085"></line><line x1="3785" y1="1877.5" x2="4485" y2="1677.5"></line><line x1="3785" y1="1877.5" x2="3572" y2="2471.5"></line><line x1="3785" y1="1877.5" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3785" y1="1877.5" x2="2485" y2="3277.5"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="3985" y2="2777.5"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="4085" y2="3177.5"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="4309.167292762334" y2="3986.137490608565"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="3572" y2="2471.5"></line><line x1="3136" y1="2391.5" x2="2685" y2="1789.5"></line><line x1="3136" y1="2391.5" x2="3985" y2="2777.5"></line><line x1="3136" y1="2391.5" x2="4585" y2="1977.5"></line><line x1="3136" y1="2391.5" x2="2985" y2="4177.5"></line><line x1="3136" y1="2391.5" x2="3754.484223940718" y2="4199.186090113368"></line><line x1="3136" y1="2391.5" x2="3796.0665423040123" y2="1369.8571240579322"></line><line x1="3136" y1="2391.5" x2="3285" y2="1577.5"></line><line x1="3136" y1="2391.5" x2="1985" y2="3077.5"></line><line x1="3136" y1="2391.5" x2="2653" y2="2480.5"></line><line x1="3136" y1="2391.5" x2="3285" y2="3177.5"></line><line x1="3136" y1="2391.5" x2="3572" y2="2471.5"></line><line x1="3136" y1="2391.5" x2="5569.520168322261" y2="3763.095653117195"></line><line x1="3136" y1="2391.5" x2="2985" y2="2879"></line><line x1="3085" y1="1877.5" x2="1922.3927901830423" y2="2332.5500637184105"></line><line x1="3085" y1="1877.5" x2="3136" y2="2391.5"></line><line x1="3085" y1="1877.5" x2="2985" y2="2879"></line><line x1="3085" y1="1877.5" x2="2278.8462568509167" y2="4211.495170130216"></line><line x1="3085" y1="1877.5" x2="2798.538634498701" y2="4763.065839777692"></line><line x1="3085" y1="1877.5" x2="2498.3249266107514" y2="3025.595836637435"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="3985" y2="2777.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="2985" y2="4177.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="4985" y2="3202.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="4610" y2="3660.8333333333335"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="3885" y2="3477.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="4225.2462464152295" y2="4521.219678320343"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="5760.291154374201" y2="2915.863764235554"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="3136" y2="2391.5"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="3264.3699317436235" y2="4784.441454997146"></line><line x1="3136" y1="2391.5" x2="3085" y2="1877.5" class="route-line"></line><line x1="3085" y1="1877.5" x2="2653" y2="2480.5" class="route-line"></line><line x1="2653" y1="2480.5" x2="3985" y2="2777.5" class="route-line"></line><line x1="3985" y1="2777.5" x2="4605.272052789915" y2="2807.1920482519486" class="route-line"></line><line x1="4605.272052789915" y1="2807.1920482519486" x2="4085" y2="3177.5" class="route-line"></line><line x1="4085" y1="3177.5" x2="2882.2089138391198" y2="3480.16498532215" class="route-line"></line><line x1="2882.2089138391198" y1="3480.16498532215" x2="1922.3927901830423" y2="2332.5500637184105" class="route-line"></line><line x1="1922.3927901830423" y1="2332.5500637184105" x2="3885" y2="3477.5" class="route-line"></line><line x1="3885" y1="3477.5" x2="2985" y2="2879" class="route-line"></line><line x1="2985" y1="2879" x2="3285" y2="3177.5" class="route-line"></line><line x1="3285" y1="3177.5" x2="2498.3249266107514" y2="3025.595836637435" class="route-line"></line><line x1="2498.3249266107514" y1="3025.595836637435" x2="2285" y2="3577.5" class="route-line"></line><line x1="2285" y1="3577.5" x2="3485" y2="3777.5" class="route-line"></line><line x1="3485" y1="3777.5" x2="2985" y2="4177.5" class="route-line"></line><line x1="2985" y1="4177.5" x2="3572" y2="2471.5" class="route-line"></line><line x1="3572" y1="2471.5" x2="4309.167292762334" y2="3986.137490608565" class="route-line"></line><line x1="4309.167292762334" y1="3986.137490608565" x2="1985" y2="3077.5" class="route-line"></line><line x1="1985" y1="3077.5" x2="4585" y2="1977.5" class="route-line"></line><line x1="4585" y1="1977.5" x2="2798.538634498701" y2="4763.065839777692" class="route-line"></line><line x1="2798.538634498701" y1="4763.065839777692" x2="3754.484223940718" y2="4199.186090113368" class="route-line"></line><line x1="3754.484223940718" y1="4199.186090113368" x2="3285" y2="1577.5" class="route-line"></line><line x1="3285" y1="1577.5" x2="2685" y2="1789.5" class="route-line"></line><line x1="2685" y1="1789.5" x2="3796.0665423040123" y2="1369.8571240579322" class="route-line"></line><line x1="3796.0665423040123" y1="1369.8571240579322" x2="5219.007978118187" y2="2358.0302113560047" class="route-line"></line><line x1="5219.007978118187" y1="2358.0302113560047" x2="5760.291154374201" y2="2915.863764235554" class="route-line"></line><line x1="5760.291154374201" y1="2915.863764235554" x2="4985" y2="3202.5" class="route-line"></line><line x1="4985" y1="3202.5" x2="4990.866957654035" y2="4206.126965517494" class="route-line"></line><line x1="4990.866957654035" y1="4206.126965517494" x2="4225.2462464152295" y2="4521.219678320343" class="route-line"></line><line x1="4225.2462464152295" y1="4521.219678320343" x2="1583.9245152050667" y2="3572.946739837896" class="route-line"></line><line x1="1583.9245152050667" y1="3572.946739837896" x2="3814.3099592791514" y2="4785.589233446884" class="route-line"></line><line x1="3814.3099592791514" y1="4785.589233446884" x2="1132.6008416113023" y2="2978.4927551953233" class="route-line"></line><line x1="1132.6008416113023" y1="2978.4927551953233" x2="4257.885330020983" y2="2385.014040932756" class="route-line"></line><line x1="4257.885330020983" y1="2385.014040932756" x2="4610" y2="3660.8333333333335" class="route-line"></line><line x1="4610" y1="3660.8333333333335" x2="5569.520168322261" y2="3763.095653117195" class="route-line"></line><line x1="5569.520168322261" y1="3763.095653117195" x2="2278.8462568509167" y2="4211.495170130216" class="route-line"></line><line x1="2278.8462568509167" y1="4211.495170130216" x2="2485" y2="3277.5" class="route-line"></line><line x1="2485" y1="3277.5" x2="4937.363486547591" y2="1905.4727947210085" class="route-line"></line><line x1="4937.363486547591" y1="1905.4727947210085" x2="4485" y2="1677.5" class="route-line"></line><line x1="4485" y1="1677.5" x2="3785" y2="1877.5" class="route-line"></line><line x1="3785" y1="1877.5" x2="3264.3699317436235" y2="4784.441454997146" class="route-line"></line></svg><div class="node central" data-id="ontomena" style="left: 3051px; top: 2314px; border-left: 5px solid rgb(47, 86, 165);"><div class="node-category" style="color:hsl(220,55.9%,41.5%)">core concept</div><div class="node-title">Ontomena</div><div class="node-subtitle">being-as-it-shows-itself</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('ontomena')">+4</div></div><div class="node" data-id="panonticism" style="left: 3200px; top: 3100px; border-left: 5px solid rgb(194, 104, 39);"><div class="node-category" style="color:hsl(25,66.7%,45.7%)">ethics / practice</div><div class="node-title">Panonticism</div><div class="node-subtitle">liberating all the things</div></div><div class="node" data-id="aisthesis" style="left: 3900px; top: 2700px; border-left: 5px solid rgb(194, 104, 39);"><div class="node-category" style="color:hsl(25,66.7%,45.7%)">aesthetics / ethics</div><div class="node-title">Aisthesis / An-aisthesis</div><div class="node-subtitle">perception vs its closure</div></div><div class="node" data-id="whitehead" style="left: 2797.21px; top: 3402.66px; border-left: 5px solid rgb(57, 93, 164);"><div class="node-category" style="color:hsl(220,48.6%,43.3%)">philosophy / process</div><div class="node-title">Prehension</div><div class="node-subtitle">process, feeling, creative advance</div></div><div class="node" data-id="bergson" style="left: 3800px; top: 3400px; border-left: 5px solid rgb(56, 92, 164);"><div class="node-category" style="color:hsl(220,49.4%,43.1%)">philosophy / process</div><div class="node-title">Duration</div><div class="node-subtitle">durée, élan vital, becoming</div></div><div class="node" data-id="berkeley" style="left: 2568px; top: 2403px; border-left: 5px solid rgb(59, 94, 164);"><div class="node-category" style="color:hsl(220,47.3%,43.6%)">philosophy / epistemology</div><div class="node-title">Esse est Percipi</div><div class="node-subtitle">to be is to be perceived</div></div><div class="node" data-id="autocracy-inc" style="left: 4000px; top: 3100px; border-left: 5px solid rgb(188, 78, 72);"><div class="node-category" style="color:hsl(3,46.7%,51.0%)">political</div><div class="node-title">Autocracy Inc.</div><div class="node-subtitle">industrialised ontomenal management</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('autocracy-inc')">+1</div></div><div class="node" data-id="heidegger" style="left: 3000px; top: 1800px; border-left: 5px solid rgb(54, 91, 164);"><div class="node-category" style="color:hsl(220,50.3%,42.9%)">philosophy / ontology</div><div class="node-title">Aletheia</div><div class="node-subtitle">unconcealment — truth as disclosure</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('heidegger')">+1</div></div><div class="node" data-id="magnet-opus" style="left: 2413.32px; top: 2948.1px; border-left: 5px solid rgb(188, 108, 51);"><div class="node-category" style="color:hsl(25,57.1%,47.0%)">practice</div><div class="node-title">Magnet Opus</div><div class="node-subtitle">geomagnetic sonification</div></div><div class="node" data-id="mardship-bow" style="left: 2200px; top: 3500px; border-left: 5px solid rgb(188, 108, 51);"><div class="node-category" style="color:hsl(25,57.1%,47.0%)">practice</div><div class="node-title">Mardship Bow</div><div class="node-subtitle">the walk, Leeds–Halifax</div></div><div class="node" data-id="bioregion" style="left: 3400px; top: 3700px; border-left: 5px solid rgb(70, 130, 98);"><div class="node-category" style="color:hsl(148,30.1%,39.3%)">ecology / ethics</div><div class="node-title">Bioregional Ethics</div><div class="node-subtitle">place, vitalism, and the ethics of the local</div></div><div class="node" data-id="levinas" style="left: 2900px; top: 2800px; border-left: 5px solid rgb(59, 94, 164);"><div class="node-category" style="color:hsl(220,47.3%,43.6%)">philosophy / ethics</div><div class="node-title">The Face / The Flesh</div><div class="node-subtitle">ethical encounter and embodied perception</div></div><div class="node" data-id="aphanipoiesis" style="left: 2900px; top: 4100px; border-left: 5px solid rgb(66, 128, 95);"><div class="node-category" style="color:hsl(148,32.4%,38.0%)">philosophy / systems</div><div class="node-title">Aphanipoiesis</div><div class="node-subtitle">the unseen bringing-forth</div></div><div class="node" data-id="metabolic-panorama" style="left: 4224.17px; top: 3907.14px; border-left: 5px solid rgb(187, 79, 73);"><div class="node-category" style="color:hsl(3,45.8%,51.0%)">political / ecological</div><div class="node-title">Metabolic Panorama</div><div class="node-subtitle">the managed appearance of normality</div></div><div class="node" data-id="herzog" style="left: 1900px; top: 3000px; border-left: 5px solid rgb(189, 108, 49);"><div class="node-category" style="color:hsl(25,58.7%,46.8%)">aesthetics / practice</div><div class="node-title">Ecstatic Truth</div><div class="node-subtitle">fabrication as revelation</div></div><div class="node" data-id="edinburgh-ssk" style="left: 4500px; top: 1900px; border-left: 5px solid rgb(196, 151, 45);"><div class="node-category" style="color:hsl(42,62.6%,47.3%)">method / epistemology</div><div class="node-title">Anything Goes</div><div class="node-subtitle">against method — Feyerabend, Kuhn, and the strong programme</div></div><div class="node" data-id="assemblages" style="left: 3669.48px; top: 4115.19px; border-left: 5px solid rgb(198, 151, 42);"><div class="node-category" style="color:hsl(42,65.0%,47.0%)">method / epistemology</div><div class="node-title">Assemblages</div><div class="node-subtitle">actants, rhizomes, readymades — being as composition</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('assemblages')">+3</div></div><div class="node" data-id="critics" style="left: 3200px; top: 1500px; border-left: 5px solid rgb(195, 151, 47);"><div class="node-category" style="color:hsl(42,60.8%,47.5%)">critique</div><div class="node-title">Critics</div><div class="node-subtitle">objections and the pushback</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('critics')">+1</div></div><div class="node" data-id="abduction" style="left: 2600px; top: 1700px; border-left: 5px solid rgb(199, 151, 40);"><div class="node-category" style="color:hsl(42,66.8%,46.8%)">method / epistemology</div><div class="node-title">Abduction / Associative Method</div><div class="node-subtitle">the logic of creative inference</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('abduction')">+1</div></div><div class="node" data-id="platos-cave" style="left: 3711.07px; top: 1292.36px; border-left: 5px solid rgb(57, 93, 164);"><div class="node-category" style="color:hsl(220,48.6%,43.3%)">philosophy / epistemology</div><div class="node-title">Cave</div><div class="node-subtitle">managed appearance and the return</div></div><div class="node" data-id="symbol-metaphor" style="left: 5134.01px; top: 2276.03px; border-left: 5px solid rgb(198, 151, 42);"><div class="node-category" style="color:hsl(42,65.0%,47.0%)">aesthetics / method</div><div class="node-title">Symbol / Metaphor / Image</div><div class="node-subtitle">managed sign and ontomenal showing</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('symbol-metaphor')">+1</div></div><div class="node" data-id="dada-bunuel" style="left: 4900px; top: 3125px; border-left: 5px solid rgb(186, 110, 56);"><div class="node-category" style="color:hsl(25,53.4%,47.5%)">aesthetics / art</div><div class="node-title">Dada</div><div class="node-subtitle">nothing symbolises anything</div></div><div class="node" data-id="the-unclickable" style="left: 4905.87px; top: 4128.63px; border-left: 5px solid rgb(119, 82, 155);"><div class="node-category" style="color:hsl(270,31.0%,46.5%)">meta / reflexive</div><div class="node-title">The Unclickable</div><div class="node-subtitle">on reflexivity and strange loops</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('the-unclickable')">+1</div></div><div class="node" data-id="foucault-meninas" style="left: 4140.25px; top: 4443.72px; border-left: 5px solid rgb(65, 97, 163);"><div class="node-category" style="color:hsl(220,43.0%,44.6%)">philosophy / epistemology</div><div class="node-title">Foucault / Las Meninas</div><div class="node-subtitle">representing representation</div></div><div class="node" data-id="rebellion" style="left: 3487px; top: 2394px; border-left: 5px solid rgb(192, 72, 66);"><div class="node-category" style="color:hsl(3,50.2%,50.7%)">resistance / ethics</div><div class="node-title">Rebellion</div><div class="node-subtitle">the No that opens onto We</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('rebellion')">+5</div></div><div class="node" data-id="sordid-realism" style="left: 4520.27px; top: 2729.69px; border-left: 5px solid rgb(188, 78, 72);"><div class="node-category" style="color:hsl(3,46.7%,51.0%)">politics / aesthetics</div><div class="node-title">Sordid Realism</div><div class="node-subtitle">fabricated appearance and its refusal</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('sordid-realism')">+2</div></div><div class="node" data-id="magic-lantern" style="left: 5675.29px; top: 2838.36px; border-left: 5px solid rgb(187, 110, 54);"><div class="node-category" style="color:hsl(25,55.0%,47.3%)">aesthetics / memory</div><div class="node-title">Magic Lantern</div><div class="node-subtitle">projected light, living time, the past made present</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('magic-lantern')">+2</div></div><div class="node" data-id="vitalism" style="left: 2713.54px; top: 4685.57px; border-left: 5px solid rgb(65, 128, 94);"><div class="node-category" style="color:hsl(148,32.9%,37.7%)">philosophy / ecology</div><div class="node-title">Vitalism</div><div class="node-subtitle">the aliveness of matter — ancient and modern</div></div><div class="node" data-id="eco" style="left: 1498.92px; top: 3495.45px; border-left: 5px solid rgb(70, 130, 98);"><div class="node-category" style="color:hsl(148,30.1%,39.3%)">ecology / ethics</div><div class="node-title">Eco</div><div class="node-subtitle">deep ecology and the ecological self</div></div><div class="node" data-id="water" style="left: 3729.31px; top: 4708.09px; border-left: 5px solid rgb(48, 87, 165);"><div class="node-category" style="color:hsl(220,54.6%,41.8%)">threshold / element</div><div class="node-title">Water</div><div class="node-subtitle">the medium of perception and of life</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('water')">+1</div></div><div class="node" data-id="rubbish" style="left: 1047.6px; top: 2900.99px; border-left: 5px solid rgb(72, 131, 100);"><div class="node-category" style="color:hsl(148,29.0%,39.9%)">ecology / politics</div><div class="node-title">Rubbish</div><div class="node-subtitle">vibrant matter, toxic politics, what we put in the water</div></div><div class="node" data-id="situation" style="left: 4172.89px; top: 2307.51px; border-left: 5px solid rgb(187, 79, 73);"><div class="node-category" style="color:hsl(3,45.8%,51.0%)">politics / aesthetics</div><div class="node-title">Situation</div><div class="node-subtitle">the spectacle, the dérive, détournement</div></div><div class="node" data-id="dreams" style="left: 4525px; top: 3583.33px; border-left: 5px solid rgb(187, 110, 54);"><div class="node-category" style="color:hsl(25,55.0%,47.3%)">aesthetics / practice</div><div class="node-title">Dreams</div><div class="node-subtitle">reverie, the paranoiac method, and widened perception</div></div><div class="node" data-id="stet" style="left: 5484.52px; top: 3685.6px; border-left: 5px solid rgb(112, 67, 158);"><div class="node-category" style="color:hsl(270,40.1%,44.1%)">meta / ethics</div><div class="node-title">Stet</div><div class="node-subtitle">let it stand — that which refuses deletion</div></div><div class="node" data-id="anamnesis" style="left: 2193.85px; top: 4134px; border-left: 5px solid rgb(53, 90, 165);"><div class="node-category" style="color:hsl(220,51.6%,42.6%)">philosophy / memory</div><div class="node-title">Anamnesis</div><div class="node-subtitle">learning as recollection — knowledge already known</div></div><div class="node" data-id="walking" style="left: 2400px; top: 3200px; border-left: 5px solid rgb(188, 108, 51);"><div class="node-category" style="color:hsl(25,57.1%,47.0%)">practice / method</div><div class="node-title">Walking</div><div class="node-subtitle">thinking through the feet — from peripatetics to psychogeography</div></div><div class="node" data-id="homophily" style="left: 4852.36px; top: 1827.97px; border-left: 5px solid rgb(189, 76, 70);"><div class="node-category" style="color:hsl(3,47.6%,50.9%)">politics / epistemology</div><div class="node-title">Homophily</div><div class="node-subtitle">people like people like themselves</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('homophily')">+5</div></div><div class="node" data-id="real-economy" style="left: 4400px; top: 1600px; border-left: 5px solid rgb(191, 74, 68);"><div class="node-category" style="color:hsl(3,48.9%,50.8%)">politics / economics</div><div class="node-title">Real Economy</div><div class="node-subtitle">the economy as actually experienced</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('real-economy')">+5</div></div><div class="node" data-id="revolution" style="left: 3700px; top: 1800px; border-left: 5px solid rgb(191, 74, 68);"><div class="node-category" style="color:hsl(3,48.9%,50.8%)">politics / method</div><div class="node-title">Revolution</div><div class="node-subtitle">withdrawing consent, large and small</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('revolution')">+2</div></div><div class="node" data-id="rose" style="left: 3179.37px; top: 4700.44px; border-left: 5px solid rgb(68, 130, 97);"><div class="node-category" style="color:hsl(148,31.0%,38.8%)">symbol / practice / conflict</div><div class="node-title">Rose</div><div class="node-subtitle">sub rosa, conflict, resolution, the petal and the thorn</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('rose')">+3</div></div><div class="node" data-id="aufhebung" style="left: 1837.39px; top: 2255.05px; border-left: 5px solid rgb(54, 91, 164);"><div class="node-category" style="color:hsl(220,50.3%,42.9%)">philosophy / dialectic</div><div class="node-title">Aufhebung</div><div class="node-subtitle">sublation — cancel, preserve, lift up (Hegel)</div><div class="node-badge" onclick="event.stopPropagation();toggleExpand('aufhebung')">+1</div></div></div></div>
+<div id="preview-popup" class="" style="left: 924.1px; top: 10px;"><div style="font-size:10px;font-family:'DM Mono',monospace;color:hsl(42,65.0%,47.0%);margin-bottom:4px">aesthetics / method</div><strong style="font-size:15px;color:var(--text-bright)">Symbol / Metaphor / Image</strong><div style="font-size:11px;color:var(--text-dim);margin-bottom:8px">managed sign and ontomenal showing</div><div style="font-size:13px;line-height:1.6;color:var(--text)">The distinction at the heart of a certain tradition of thinking about art and meaning — and the distinction that maps most precisely onto the ontomenal framework in aesthetic terms.
+Tarkovsky: "A symb…</div></div>
 
 <!-- Reading panel -->
 <div id="reading-overlay" class="">
-  <div id="reading-panel" style="border-left: 8px solid rgb(62, 96, 163);">
+  <div id="reading-panel" style="border-left: 8px solid rgb(198, 151, 42);">
     <button class="panel-nav-arrow panel-nav-left" id="panel-nav-left" onclick="navigatePanel(-1)" style="display: flex;">‹</button>
     <button class="panel-nav-arrow panel-nav-right" id="panel-nav-right" onclick="navigatePanel(1)" style="display: flex;">›</button>
     <div class="rp-toolbar">
@@ -371,37 +393,64 @@ The word 'ontomena' is a neologism fu…</div></div>
       <button onclick="closeReading()">[ close ] esc</button>
     </div>
     <div class="rp-aspect-nav" id="rp-aspect-nav" style="display: flex;">
-      <span id="rp-aspect-pos">42 / 42</span>
+      <span id="rp-aspect-pos">25 / 41</span>
     </div>
-    <div id="rp-view-mode" style="display: none;">
+    <div id="rp-view-mode" style="display: block;">
       <div id="rp-breadcrumb" style="display:none;margin-bottom:8px;"></div>
-      <div class="rp-category" id="rp-cat" style="color: rgb(62, 96, 163);">new</div>
-      <div class="rp-title" id="rp-title">New Node</div>
-      <div class="rp-subtitle" id="rp-sub">click to edit</div>
-      <div class="rp-body" id="rp-body" title="click to edit" style="cursor: pointer;"><p>Content goes here.</p></div>
-      <div id="rp-connections"></div>
+      <div class="rp-category" id="rp-cat" style="color: rgb(198, 151, 42);">aesthetics / method</div>
+      <div class="rp-title" id="rp-title">Symbol / Metaphor / Image</div>
+      <div class="rp-subtitle" id="rp-sub">managed sign and ontomenal showing</div>
+      <div class="rp-body" id="rp-body" title=""><p>The distinction at the heart of a certain tradition of thinking about art and meaning — and the distinction that maps most precisely onto the ontomenal framework in aesthetic terms.</p>
+<p id="tarkovsky-distinction">Tarkovsky: <em>"A symbol contains within itself a definite meaning, certain intellectual formula, while metaphor is an image... metaphor is a being-within-itself, it's a monomial. It falls apart at any attempt of touching it."</em> The symbol is closed — it points beyond itself to a pre-given meaning. The metaphor-image is open — indeterminate, self-sufficient, irreducible. What Tarkovsky calls metaphor-image is what ontomena calls being-as-it-shows-itself. The symbol is managed appearance; the metaphor-image is ontomenal showing. See <a class="node-link" href="#" onclick="openNode('tarkovsky');return false;">[Tarkovsky]</a>.</p>
+<p id="trojan-horse">In my <a target="_blank" href="http://simonbradley.blogspot.com/2009/08/symbol-and-metaphor-in-lars-von-triers.html">blog article</a>(2009) on Von Trier's Antichrist, I noted: "Symbols are Trojan Horses, loaded with metaphors." The symbol appears to be a closed sign but conceals metaphorical depth that can be sprung open. The crucifix: symbolises Christianity (closed, decodable) AND operates as metaphor for suffering, redemption, sacrifice (open, resonant, shifting). The swastika: its symbolic layer forecloses the metaphorical; the history of its use has collapsed the Trojan Horse. Some symbols cannot be reopened. See <a class="node-link" href="#" onclick="openNode('von-trier');return false;">[Von Trier / Antichrist]</a>.</p>
+<p id="continuum">The continuum rather than binary: symbol and metaphor are not cleanly separable categories but poles of a spectrum. All symbols are potentially metaphors; all metaphors risk becoming symbols when their meanings calcify. The political implication: managed appearance works by fixing the symbol, foreclosing its metaphorical depth. Propaganda is the systematic conversion of metaphor-images into symbols — the living showing frozen into a decodable sign. Aisthesis is the capacity to encounter the metaphor-image before it has been fixed. See <a class="node-link" href="#" onclick="openNode('aisthesis');return false;">[Aisthesis]</a>.</p>
+<p id="jung">Jung: symbols as psychological genes, the building blocks of consciousness. Symbols carry radically different individual meanings while preserving "reverberant ancient/primitive forms" — the archetype beneath the specific sign. This suggests a third category: the archetypal image, which is neither fixed symbol nor free metaphor but something that resonates with shared deep structure while remaining indeterminate in its specific showing. See <a class="node-link" href="#" onclick="openNode('jung-archetype');return false;">[Jung / Archetype]</a>.</p>
+<p id="blogs">A full development of this in relation to Trier and Tarkovsky: can be found in my article, 'Symbol and Metaphor in Lars von Trier's Antichrist', Parts 1 and 2 (2009). Part 1: <a target="_blank" href="http://simonbradley.blogspot.com/2009/08/symbol-and-metaphor-in-lars-von-triers.html">August 2009</a>. Part 2: <a target="_blank" href="http://simonbradley.blogspot.com/2009/10/symbol-and-metaphor-in-lars-von-triers.html">October 2009</a>.</p>
+<p>Another layer of complexity concerning political power and symbols is discussed in an excellent <a target="_blank" href="https://www.theguardian.com/us-news/2026/jun/07/trump-america-birthday-us-monuments">Guardian article</a> by Edward Helmore in which he quotes Paul Farber, director of Monument Lab extensively in relation to the 250th anniversary of the USA.
+“The relationship between our symbols and systems of democracy are entangled – and have been since the very beginning of the American experiment. Symbols and systems of power reflect on another,” 
+Indeed, Trump has said the Garden of Heroes is a response to “this reckless attempt to erase our heroes, values, and entire way of life” and will feature “statues of the greatest Americans to ever live”.
+
+“In American history the debate about our future is channeled across who gets to write the narrative of the past, and we are in the throes of that right now,” Farber says. “Nothing is inherently a monument, but the objects, artworks and sites we call monuments. They are often more about power, and the way we build and share power, they are about memory.”
+
+And then there’s the Garden of Heroes, which Trump proposed in his first term, but is now being rushed into semi-complete form in time for Independence Day. With it will come inscriptions that will generate argument in themselves, as Farber points out.
+
+“To say that Martin Luther King Jr had a can do spirit, or he fought for justice, but to not name the injustice he was fight against, is itself revealing. It’s a kind of Faustian bargain. It’s an elevation of history as representation but without the actual story. The ideological project is more than spotlighting key figures, it’s having the power to tell the story in a way that omits the history.”
+
+Then there’s the problem of what to do with libraries, schools and streets named after Cesar Chavez, the Latin labor leader, who died in 1993, revealed by a New York Times investigation to have been a serial sexual abuser, including of minors.
+
+J. Savile - victims stet
+
+
+<a class="node-link" href="#" onclick="openNode('stet');return false;">[Stet]</a>
+</p></div>
+      <div id="rp-connections"><div class="rp-aspects-box"><div class="rp-conn-label">folded aspects</div><a class="rp-conn-link" href="#" onclick="if(!expandedNodes.has('symbol-metaphor')){expandedNodes.add('symbol-metaphor');renderNodes();setTimeout(updateConnections,50);}openNode('jung-archetype');return false;">Jung / Archetype</a></div><div class="rp-conn-label" style="margin-top:16px;">connections</div><a class="rp-conn-link" href="#" onclick="openNode('aisthesis');return false;" style="border-left-color:hsl(25,66.7%,45.7%)">Aisthesis / An-aisthesis</a><a class="rp-conn-link" href="#" onclick="openNode('aphanipoiesis');return false;" style="border-left-color:hsl(148,32.4%,38.0%)">Aphanipoiesis</a><a class="rp-conn-link" href="#" onclick="openNode('dada-bunuel');return false;" style="border-left-color:hsl(25,53.4%,47.5%)">Dada</a><a class="rp-conn-link" href="#" onclick="openNode('dreams');return false;" style="border-left-color:hsl(25,55.0%,47.3%)">Dreams</a><a class="rp-conn-link" href="#" onclick="openNode('bergson');return false;" style="border-left-color:hsl(220,49.4%,43.1%)">Duration</a><a class="rp-conn-link" href="#" onclick="openNode('foucault-meninas');return false;" style="border-left-color:hsl(220,43.0%,44.6%)">Foucault / Las Meninas</a><a class="rp-conn-link" href="#" onclick="openNode('magic-lantern');return false;" style="border-left-color:hsl(25,55.0%,47.3%)">Magic Lantern</a><a class="rp-conn-link" href="#" onclick="openNode('ontomena');return false;" style="border-left-color:hsl(220,55.9%,41.5%)">Ontomena</a><a class="rp-conn-link" href="#" onclick="openNode('rose');return false;" style="border-left-color:hsl(148,31.0%,38.8%)">Rose</a></div>
     </div>
-    <div id="rp-edit-mode" style="display: block;">
-    <div class="edit-section"><label>id</label><input type="text" id="ed-id" value="node_101_1780603622664" placeholder="lowercase-hyphenated"><div class="edit-id-note">used in cross-references · changes update all links</div></div>
-    <div class="edit-section"><label>category</label><input type="text" id="ed-cat" value="new"></div>
-    <div class="edit-section"><label>title</label><input type="text" id="ed-title" value="New Node"></div>
-    <div class="edit-section"><label>subtitle</label><input type="text" id="ed-sub" value="click to edit"></div>
+    <div id="rp-edit-mode" style="display: none;">
+    <div class="edit-section"><label>id</label><input type="text" id="ed-id" value="symbol-metaphor" placeholder="lowercase-hyphenated"><div class="edit-id-note">used in cross-references · changes update all links</div></div>
+    <div class="edit-section"><label>category</label><input type="text" id="ed-cat" value="aesthetics / method"></div>
+    <div class="edit-section"><label>title</label><input type="text" id="ed-title" value="Symbol / Metaphor / Image"></div>
+    <div class="edit-section"><label>subtitle</label><input type="text" id="ed-sub" value="managed sign and ontomenal showing"></div>
     <div class="edit-section">
       <label>node colour</label>
       <select class="ed-group-select" id="ed-group" onchange="updateFadePreview()">
         <option value="0">0 — cadmium red · politics / resistance</option>
-        <option value="1">1 — chrome yellow · method / epistemology</option>
-        <option value="2" selected="">2 — cobalt blue · philosophy / foundations</option>
+        <option value="1" selected="">1 — chrome yellow · method / epistemology</option>
+        <option value="2">2 — cobalt blue · philosophy / foundations</option>
         <option value="3">3 — viridian · ecology / bioregion</option>
         <option value="4">4 — cadmium orange · aesthetics / practice</option>
         <option value="5">5 — violet · meta / reflexive</option>
       </select>
-      <div class="ed-colour-preview" id="ed-colour-preview" style="background:hsl(220,45.1%,44.1%)"></div>
+      <div class="ed-colour-preview" id="ed-colour-preview" style="background:hsl(42,65.0%,47.0%)"></div>
     </div>
-    <div class="edit-section"><label>fade <span id="ed-fade-val">30%</span></label>
-      <input type="range" class="ed-fade-slider" id="ed-fade" min="0" max="100" value="30" oninput="updateFadePreview()">
+    <div class="edit-section"><label>fade <span id="ed-fade-val">28%</span></label>
+      <input type="range" class="ed-fade-slider" id="ed-fade" min="0" max="100" value="28" oninput="updateFadePreview()">
     </div>
-    <div class="edit-section"><label>content (html)</label><textarea id="ed-content" style="height: 418px;">&lt;p&gt;Content goes here.&lt;/p&gt;</textarea></div>
+    <div class="edit-section"><label>content (html)</label><textarea id="ed-content" style="height: 2255px;">&lt;p&gt;The distinction at the heart of a certain tradition of thinking about art and meaning — and the distinction that maps most precisely onto the ontomenal framework in aesthetic terms.&lt;/p&gt;
+&lt;p id="tarkovsky-distinction"&gt;Tarkovsky: &lt;em&gt;"A symbol contains within itself a definite meaning, certain intellectual formula, while metaphor is an image... metaphor is a being-within-itself, it's a monomial. It falls apart at any attempt of touching it."&lt;/em&gt; The symbol is closed — it points beyond itself to a pre-given meaning. The metaphor-image is open — indeterminate, self-sufficient, irreducible. What Tarkovsky calls metaphor-image is what ontomena calls being-as-it-shows-itself. The symbol is managed appearance; the metaphor-image is ontomenal showing. See &lt;a class="node-link" href="#" onclick="openNode('tarkovsky');return false;"&gt;[Tarkovsky]&lt;/a&gt;.&lt;/p&gt;
+&lt;p id="trojan-horse"&gt;Simon Bradley (2009): "Symbols are Trojan Horses, loaded with metaphors." The symbol appears to be a closed sign but conceals metaphorical depth that can be sprung open. The crucifix: symbolises Christianity (closed, decodable) AND operates as metaphor for suffering, redemption, sacrifice (open, resonant, shifting). The swastika: its symbolic layer forecloses the metaphorical; the history of its use has collapsed the Trojan Horse. Some symbols cannot be reopened. See &lt;a class="node-link" href="#" onclick="openNode('von-trier');return false;"&gt;[Von Trier / Antichrist]&lt;/a&gt;.&lt;/p&gt;
+&lt;p id="continuum"&gt;The continuum rather than binary: symbol and metaphor are not cleanly separable categories but poles of a spectrum. All symbols are potentially metaphors; all metaphors risk becoming symbols when their meanings calcify. The political implication: managed appearance works by fixing the symbol, foreclosing its metaphorical depth. Propaganda is the systematic conversion of metaphor-images into symbols — the living showing frozen into a decodable sign. Aisthesis is the capacity to encounter the metaphor-image before it has been fixed. See &lt;a class="node-link" href="#" onclick="openNode('aisthesis');return false;"&gt;[Aisthesis]&lt;/a&gt;.&lt;/p&gt;
+&lt;p id="jung"&gt;Jung: symbols as psychological genes, the building blocks of consciousness. Symbols carry radically different individual meanings while preserving "reverberant ancient/primitive forms" — the archetype beneath the specific sign. This suggests a third category: the archetypal image, which is neither fixed symbol nor free metaphor but something that resonates with shared deep structure while remaining indeterminate in its specific showing. See &lt;a class="node-link" href="#" onclick="openNode('jung-archetype');return false;"&gt;[Jung / Archetype]&lt;/a&gt;.&lt;/p&gt;
+&lt;p id="blogs"&gt;The full development of this in relation to Trier and Tarkovsky: Simon Bradley, 'Symbol and Metaphor in Lars von Trier's Antichrist', Parts 1 and 2 (2009). Part 1: &lt;a target="_blank" href="http://simonbradley.blogspot.com/2009/08/symbol-and-metaphor-in-lars-von-triers.html" target="_blank"&gt;August 2009&lt;/a&gt;. Part 2: &lt;a target="_blank" href="http://simonbradley.blogspot.com/2009/10/symbol-and-metaphor-in-lars-von-triers.html" target="_blank"&gt;October 2009&lt;/a&gt;.&lt;/p&gt;</textarea></div>
     <div class="edit-section"><label>image path</label><input type="text" id="ed-image" value="" placeholder="e.g. images/photo.jpg"></div>
     <div class="edit-section"><label>image caption</label><input type="text" id="ed-image-caption" value="" placeholder="optional caption"></div>
     <div class="edit-section"><label>audio path</label><input type="text" id="ed-audio" value="" placeholder="e.g. audio/clip.mp3"></div>
@@ -409,11 +458,19 @@ The word 'ontomena' is a neologism fu…</div></div>
     <div class="edit-toggle" style="margin-top:8px;"><input type="checkbox" id="ed-central"><span>central node (thicker border)</span></div>
     <div class="edit-section" style="margin-top:20px;">
       <label>connections</label>
-      <div class="conn-checkbox-list"><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="abduction"><span>Abduction / Associative Method</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="aisthesis"><span>Aisthesis / An-aisthesis</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="heidegger"><span>Aletheia</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="anamnesis"><span>Anamnesis</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="edinburgh-ssk"><span>Anything Goes</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="aphanipoiesis"><span>Aphanipoiesis</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="assemblages"><span>Assemblages</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="aufhebung"><span>Aufhebung</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="autocracy-inc"><span>Autocracy Inc.</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="bioregion"><span>Bioregional Ethics</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="platos-cave"><span>Cave</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="critics"><span>Critics</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="dada-bunuel"><span>Dada</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="dreams"><span>Dreams</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="bergson"><span>Duration</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="eco"><span>Eco</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="herzog"><span>Ecstatic Truth</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="berkeley"><span>Esse est Percipi</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="foucault-meninas"><span>Foucault / Las Meninas</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="homophily"><span>Homophily</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="magic-lantern"><span>Magic Lantern</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="magnet-opus"><span>Magnet Opus</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="mardship-bow"><span>Mardship Bow</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="metabolic-panorama"><span>Metabolic Panorama</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="ontomena"><span>Ontomena</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="panonticism"><span>Panonticism</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="whitehead"><span>Prehension</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="real-economy"><span>Real Economy</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="rebellion"><span>Rebellion</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="revolution"><span>Revolution</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="rose"><span>Rose</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="rubbish"><span>Rubbish</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="situation"><span>Situation</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="sordid-realism"><span>Sordid Realism</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="stet"><span>Stet</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="symbol-metaphor"><span>Symbol / Metaphor / Image</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="levinas"><span>The Face / The Flesh</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="the-unclickable"><span>The Unclickable</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="vitalism"><span>Vitalism</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="walking"><span>Walking</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="water"><span>Water</span></label></div>
+      <div class="conn-checkbox-list"><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="abduction"><span>Abduction / Associative Method</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="aisthesis" checked=""><span>Aisthesis / An-aisthesis</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="heidegger"><span>Aletheia</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="anamnesis"><span>Anamnesis</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="edinburgh-ssk"><span>Anything Goes</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="aphanipoiesis" checked=""><span>Aphanipoiesis</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="assemblages"><span>Assemblages</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="aufhebung"><span>Aufhebung</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="autocracy-inc"><span>Autocracy Inc.</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="bioregion"><span>Bioregional Ethics</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="platos-cave"><span>Cave</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="critics"><span>Critics</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="dada-bunuel" checked=""><span>Dada</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="dreams" checked=""><span>Dreams</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="bergson" checked=""><span>Duration</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="eco"><span>Eco</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="herzog"><span>Ecstatic Truth</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="berkeley"><span>Esse est Percipi</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="foucault-meninas" checked=""><span>Foucault / Las Meninas</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="homophily"><span>Homophily</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="magic-lantern" checked=""><span>Magic Lantern</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="magnet-opus"><span>Magnet Opus</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="mardship-bow"><span>Mardship Bow</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="metabolic-panorama"><span>Metabolic Panorama</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="ontomena" checked=""><span>Ontomena</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="panonticism"><span>Panonticism</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="whitehead"><span>Prehension</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="real-economy"><span>Real Economy</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="rebellion"><span>Rebellion</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="revolution"><span>Revolution</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="rose" checked=""><span>Rose</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="rubbish"><span>Rubbish</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="situation"><span>Situation</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="sordid-realism"><span>Sordid Realism</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="stet"><span>Stet</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="levinas"><span>The Face / The Flesh</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="the-unclickable"><span>The Unclickable</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="vitalism"><span>Vitalism</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="walking"><span>Walking</span></label><label class="conn-checkbox-item"><input type="checkbox" class="conn-checkbox" value="water"><span>Water</span></label></div>
     </div>
     <div class="ed-aspects-section">
       <label>folded aspects</label>
-      <div id="ed-aspects-list"><div class="ed-aspects-empty">No folded aspects yet.</div></div>
+      <div id="ed-aspects-list"><div class="ed-aspect-item">
+        <span class="ed-aspect-title">Jung / Archetype</span>
+        <div class="ed-aspect-btns">
+          <button disabled="" onclick="reorderAspect('jung-archetype',-1)">↑</button>
+          <button disabled="" onclick="reorderAspect('jung-archetype',1)">↓</button>
+          <button onclick="editAspect('jung-archetype')">edit</button>
+          <button class="danger-small" onclick="removeAspectPrompt('jung-archetype')">×</button>
+        </div>
+      </div></div>
       <button class="ed-add-aspect-btn" onclick="addNewAspect()">+ add aspect</button>
     </div>
     <div class="edit-actions">
@@ -422,7 +479,7 @@ The word 'ontomena' is a neologism fu…</div></div>
       <button onclick="cancelEdit()">cancel</button>
       <button class="danger" onclick="confirmDeleteNode()">delete node</button>
     </div>
-    <div id="delete-confirm"><div class="confirm-bar">delete this node? <button class="yes" onclick="deleteCurrentNode()">yes, delete</button><button onclick="document.getElementById('delete-confirm').innerHTML=''">cancel</button></div></div>
+    <div id="delete-confirm"></div>
   </div>
   </div>
 </div>
@@ -452,6 +509,7 @@ The word 'ontomena' is a neologism fu…</div></div>
       <div class="settings-row"><label>strapline</label><input type="text" id="set-strapline" oninput="applyStrapline()"></div>
       <div class="settings-row"><label>aspects label</label><input type="text" id="set-aspects-label" oninput="applyAspectsLabel()"></div>
       <div class="settings-row"><label>home node id</label><input type="text" id="set-home-node" oninput="applyHomeNode()"></div>
+      <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:6px;"><label>introduction text (public)</label><textarea id="set-intro" style="width:100%;min-height:100px;background:var(--bg);border:1px solid var(--rule);color:var(--text);padding:8px;font-family:'DM Sans',sans-serif;font-size:12px;border-radius:4px;resize:vertical;" oninput="applyIntro()"></textarea></div>
     </div>
     <div style="margin-top:24px;"><button class="ctrl-btn" onclick="closeSettings()">[ close ]</button></div>
   </div>
@@ -556,7 +614,7 @@ The word 'ontomena' is a neologism fu…</div></div>
 
 <!-- Sidebar -->
 <div id="sidebar">
-  <div id="sidebar-header"><h2>Route</h2><button onclick="shuffleRoute()" id="btn-shuffle">[ shuffle ]</button><button onclick="toggleSidebar()">[ close ]</button></div>
+  <div id="sidebar-header"><button class="sidebar-x-close" onclick="toggleSidebar()" title="close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="1" y1="1" x2="13" y2="13"></line><line x1="13" y1="1" x2="1" y2="13"></line></svg></button><h2>Route</h2><button onclick="shuffleRoute()" id="btn-shuffle">[ shuffle ]</button><button onclick="toggleAnimatedTour()" id="btn-anim-tour" title="Animated tour: zoom between nodes">[ animate ]</button></div>
   <div class="sidebar-tabs">
     <button class="sidebar-tab active" id="tab-route" onclick="switchSidebarTab('route')">route</button>
     <button class="sidebar-tab" id="tab-index" onclick="switchSidebarTab('index')">index</button>
@@ -565,23 +623,72 @@ The word 'ontomena' is a neologism fu…</div></div>
   <div id="index-list" style="display:none;"></div>
 </div>
 
+<!-- Code Snippets overlay -->
+<div id="code-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:8000;align-items:center;justify-content:center;">
+  <div id="code-panel" style="background:var(--bg-reading);border:1px solid var(--accent-dim);border-radius:12px;width:min(700px,92vw);max-height:84vh;overflow-y:auto;padding:32px 36px 24px;">
+    <h2 style="font-size:18px;font-weight:700;color:var(--text-bright);margin-bottom:4px;">Code Snippets</h2>
+    <p style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;margin-bottom:20px;">Click copy to paste into the node edit panel.</p>
+    <div id="code-snippets-list"></div>
+    <div style="margin-top:20px;"><button onclick="closeCodeSnippets()" style="font-family:'JetBrains Mono',monospace;font-size:12px;">[ close ]</button></div>
+  </div>
+</div>
+
+<!-- Introduction overlay -->
+<div id="intro-overlay">
+  <div id="intro-panel">
+    <h2 id="intro-panel-title">Introduction</h2>
+    <div id="intro-view">
+      <div class="intro-view-content" id="intro-view-text"></div>
+      <div class="intro-toolbar">
+        <button id="btn-intro-edit" onclick="showIntroEdit()">[ edit ]</button>
+        <button onclick="closeIntroPanel()">[ close ]</button>
+      </div>
+    </div>
+    <div id="intro-edit" style="display:none;">
+      <textarea id="intro-textarea" style="width:100%;min-height:200px;background:var(--bg);border:1px solid var(--rule);color:var(--text);padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;border-radius:6px;resize:vertical;"></textarea>
+      <div class="intro-toolbar">
+        <button onclick="saveIntroText()">[ save ]</button>
+        <button onclick="closeIntroEdit()">[ cancel ]</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Controls -->
 <div id="controls">
-  <button onclick="resetView()">reset</button>
-  <button onclick="fitAll()">fit all</button>
-  <button onclick="compactByRoute()">compact: route</button>
-  <button onclick="compactByAlpha()">compact: A–Z</button>
-  <button onclick="restoreLayout()" id="btn-restore" style="opacity:0.3;pointer-events:none;">restore</button>
-  <button onclick="toggleSidebar()" id="btn-route">route</button>
+  <div class="ctrl-group" id="ctrl-arrange">
+    <button class="ctrl-btn ctrl-group-btn" onclick="toggleCtrlGroup('ctrl-arrange')">arrange ▾</button>
+    <div class="ctrl-dropdown" id="dd-arrange">
+      <button onclick="resetView();closeCtrlGroups()">reset</button>
+      <button onclick="fitAll();closeCtrlGroups()">fit all</button>
+      <button onclick="compactByRoute();closeCtrlGroups()">compact: route</button>
+      <button onclick="compactByAlpha();closeCtrlGroups()">compact: A–Z</button>
+      <button id="btn-restore" onclick="restoreLayout();closeCtrlGroups()" style="opacity:0.3;pointer-events:none;">restore layout</button>
+      
+    </div>
+  </div>
   
   
-  <button onclick="openBibPanel()">biblio</button>
-  <button onclick="openGlossaryPanel()">glossary</button>
-  
+  <div class="ctrl-group" id="ctrl-info">
+    <button class="ctrl-btn ctrl-group-btn" onclick="toggleCtrlGroup('ctrl-info')">info ▾</button>
+    <div class="ctrl-dropdown" id="dd-info">
+      <button id="btn-intro-info" style="display:none;" onclick="openIntroPanel();closeCtrlGroups()">introduction</button>
+      <button onclick="openBibPanel();closeCtrlGroups()">bibliography</button>
+      <button onclick="openGlossaryPanel();closeCtrlGroups()">glossary</button>
+      <button onclick="showShortcutsOverlay();closeCtrlGroups()">keyboard shortcuts</button>
+      <button id="btn-code-snippets" onclick="openCodeSnippets();closeCtrlGroups()">code</button>
+      <button id="btn-export-doc-info" style="display:none;" onclick="exportRouteDoc();closeCtrlGroups()">export doc</button>
+    </div>
+  </div>
   <button onclick="startSlideshow()">present</button>
-  <button onclick="exportRouteDoc()">export doc</button>
-  
-  
+  <div class="ctrl-group" id="ctrl-export">
+    <button class="ctrl-btn ctrl-group-btn" onclick="toggleCtrlGroup('ctrl-export')">export ▾</button>
+    <div class="ctrl-dropdown open" id="dd-export">
+      <button onclick="exportRouteDoc();closeCtrlGroups()">export doc</button>
+      <button onclick="exportHTML();closeCtrlGroups()">save</button>
+      <button id="btn-export-public" onclick="exportPublicHTML();closeCtrlGroups()">export public</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -632,6 +739,8 @@ let projectTitle = "Ontomena";
 let projectStrapline = "being-as-it-shows-itself — a conceptual map";
 let aspectsLabel = "folded aspects";
 let homeNodeId = "ontomena";
+let introductionText = "";
+let animatedTour = false;
 
 let bibliographyText = "BIBLIOGRAPHY\n\nA working bibliography of texts, films, recordings and online sources referenced or implicated in the Ontomena project as currently developed. Not exhaustive — every node carries further references in its body text.\n\n────────────────────────────────────────\nPHILOSOPHY\n\nAdorno, Theodor W. — Negative Dialectics (Negative Dialektik). 1966. Trans. E.B. Ashton, Continuum 1973.\n\nAristotle — On the Soul (De Anima). Metaphysics. Various editions.\n\nBachelard, Gaston — L'Eau et les rêves (Water and Dreams). 1942. Trans. Edith R. Farrell, Dallas Institute 1983.\n— La Poétique de l'espace (The Poetics of Space). 1958.\n— La Poétique de la rêverie (The Poetics of Reverie). 1960.\nBateson, Gregory — Steps to an Ecology of Mind. Chandler, 1972.\n— Mind and Nature: A Necessary Unity. Dutton, 1979.\n\nDeleuze, Gilles — Différence et répétition (Difference and Repetition). PUF, 1968.\n— Le Pli: Leibniz et le baroque (The Fold: Leibniz and the Baroque). Minuit, 1988.\n— (with Guattari, Félix) see existing Deleuze & Guattari entry.\n\nHaraway, Donna — Staying with the Trouble: Making Kin in the Chthulucene. Duke UP, 2016.\n\nHegel, Georg Wilhelm Friedrich — Phänomenologie des Geistes (Phenomenology of Spirit). 1807.\n— Vorlesungen über die Philosophie der Geschichte (Lectures on the Philosophy of World History). 1837 (posthumous, ed. Eduard Gans).\n\nBarad, Karen — Meeting the Universe Halfway: Quantum Physics and the Entanglement of Matter and Meaning. Duke UP, 2007.\n\nBennett, Jane — \"The Force of Things: Steps toward an Ecology of Matter.\" Millennium: Journal of International Studies 32(3), 2004. https://pages.mtu.edu/~jdslack/readings/CSReadings/Bennett_Jane_The_Force_of_Things.pdf\n— Vibrant Matter: A Political Ecology of Things. Duke UP, 2010.\n\nBergson, Henri — Essai sur les données immédiates de la conscience (Time and Free Will). 1889.\n— L'Évolution créatrice (Creative Evolution). 1907.\n\nBerkeley, George — A Treatise Concerning the Principles of Human Knowledge. 1710.\n\nBloor, David — Knowledge and Social Imagery. 1976.\n\nBourdieu, Pierre — La Distinction (Distinction). 1979.\n— Le Sens pratique (The Logic of Practice). 1980.\n\nCamus, Albert — L'Homme révolté (The Rebel). 1951.\n\nDeleuze, Gilles & Guattari, Félix — Mille Plateaux (A Thousand Plateaus). 1980.\n\nFeyerabend, Paul — Against Method. 1975.\n\nFoucault, Michel — Les Mots et les choses (The Order of Things). 1966.\n\nHofstadter, Douglas — Gödel, Escher, Bach: An Eternal Golden Braid. Basic Books, 1979.\n\nHeidegger, Martin — Sein und Zeit (Being and Time). 1927.\n— \"On the Essence of Truth\" (\"Vom Wesen der Wahrheit\"). 1949.\n\nJung, Carl Gustav — The Archetypes and the Collective Unconscious. Collected Works Vol. 9. Princeton UP, 1959.\n\nKuhn, Thomas S. — The Structure of Scientific Revolutions. University of Chicago Press, 1962.\n\nLatour, Bruno — Nous n'avons jamais été modernes (We Have Never Been Modern). 1991.\n— Reassembling the Social. Oxford UP, 2005.\n\nLevinas, Emmanuel — Totalité et Infini (Totality and Infinity). 1961.\n— Autrement qu'être (Otherwise Than Being). 1974.\n\nMathews, Freya — The Ecological Self. Routledge, 1991.\n— For Love of Matter: A Contemporary Panpsychism. SUNY Press, 2003.\n\nMerleau-Ponty, Maurice — Phénoménologie de la perception (Phenomenology of Perception). 1945.\n— Le Visible et l'invisible (The Visible and the Invisible). 1964.\n\nNaess, Arne — \"The Shallow and the Deep, Long-Range Ecology Movement.\" Inquiry 16, 1973.\n\nPlato — Republic. Meno. Phaedo. Various editions.\n\nSartre, Jean-Paul — L'existentialisme est un humanisme (Existentialism is a Humanism). 1946.\n\nSpinoza, Baruch — Ethics. 1677.\n\nThales of Miletus — fragments preserved in Aristotle (Metaphysics A) and Diogenes Laërtius (Lives of Eminent Philosophers).\n\nWhitehead, Alfred North — Process and Reality. 1929.\n\n────────────────────────────────────────\nPOLITICS / RESISTANCE / ECONOMICS\n\nCarney, Mark — Address to the World Economic Forum, Davos, 20 January 2026. (Cited Václav Havel's \"The Power of the Powerless\" explicitly. \"We placed the sign in the window… This bargain no longer works.\")\n\nDuchamp, Marcel — Readymade works including Bicycle Wheel (1913), Fountain (1917). See also Schwarz, Arturo — The Complete Works of Marcel Duchamp. Delano Greenidge, 1997.\n\nDebord, Guy — La Société du Spectacle (Society of the Spectacle). 1967.\n\nFerns, Barry — Barry's Economics. YouTube channel, 2025–. Episode on Homophily and Rory Stewart: https://www.youtube.com/watch?v=Nm_L9VCBJ_E\n\nFink, Larry — Opening remarks to the World Economic Forum, Davos, 20 January 2026. (\"Will anyone outside this room care?\")\n\nHavel, Václav — Moc bezmocných (The Power of the Powerless). 1978.\n\nHertel-Fernandez, Alexander — State Capture: How Conservative Activists, Big Businesses, and Wealthy Donors Reshaped the American States — and the Nation. Oxford UP, 2019.\n\nMamdani, Zohran — Mayor of New York City (elected November 2025; took office January 2026).\n\nMandelstam, Nadezhda — Vospominaniya (Hope Against Hope). 1970.\n\nMcDonough, William & Braungart, Michael — Cradle to Cradle: Remaking the Way We Make Things. North Point Press, 2002.\n\nNavalny, Alexei — Patriot: A Memoir. Knopf, 2024.\n\nOstrom, Elinor — Governing the Commons: The Evolution of Institutions for Collective Action. Cambridge UP, 1990.\n\nPiketty, Thomas — Le Capital au XXIe siècle (Capital in the Twenty-First Century). 2013.\n\nRaworth, Kate — Doughnut Economics: Seven Ways to Think Like a 21st-Century Economist. Random House, 2017.\n\nSaez, Emmanuel & Zucman, Gabriel — The Triumph of Injustice: How the Rich Dodge Taxes and How to Make Them Pay. Norton, 2019.\n\nSharp, Gene — The Politics of Nonviolent Action (three volumes). Porter Sargent, 1973.\n— From Dictatorship to Democracy: A Conceptual Framework for Liberation. 1993. Albert Einstein Institution.\n\nStevenson, Gary — The Trading Game: A Confession. Penguin, 2024.\n\nZucman, Gabriel — The Hidden Wealth of Nations. 2015.\n— \"The Billionaire Tax — A Modest Proposal for the 21st Century.\" UNU-WIDER Annual Lecture 28, Helsinki, 4 September 2024. https://www.wider.unu.edu/event/billionaire-tax-modest-proposal-21st-century\n— G20 report: https://gabriel-zucman.eu/files/report-g20.pdf\n\nWorld Inequality Database: https://wid.world/\nRealTimeInequality.org: https://realtimeinequality.org/\n\n────────────────────────────────────────\nECOLOGY / VITALISM / MATERIALS\n\nBennett, Jane — see Philosophy.\n\nJohnson, A Frances — \"What Rubbish: Ecologies of Vibrant Matter in Contemporary Poetry.\" Axon Journal 8.1, 2018. https://axonjournal.com.au/issues/8-1/what-rubbish/\n\nAlemanno, Alberto — \"How the plastic bottle cap became a parable for the value of EU regulation.\" Guardian, 27 May 2026. https://www.theguardian.com/commentisfree/2026/may/27/how-the-plastic-bottle-cap-became-a-parable-for-the-value-of-eu-regulation\n\nMathews, Freya — see Philosophy.\n\nHofman, Justin — \"Sewage surfer\" (photograph: seahorse with cotton swab). 2017. Wildlife Photographer of the Year shortlist.\n\n────────────────────────────────────────\nAESTHETICS / FILM / ART\n\nBergman, Ingmar — Laterna Magica (The Magic Lantern). Memoir, 1987.\n\nBreton, André — Manifeste du surréalisme. 1924.\n\nBuñuel, Luis & Dalí, Salvador — Un Chien Andalou (film). 1929.\n\nHerzog, Werner — \"Minnesota Declaration: Truth and Fact in Documentary Cinema.\" Walker Art Center, 1999.\n\nKuhn, Annette — Family Secrets: Acts of Memory and Imagination. Verso, 1995.\n\nPanahi, Jafar — This Is Not a Film. 2011. Taxi. 2015. Three Faces. 2018. No Bears. 2022.\n\nTarkovsky, Andrei — Sculpting in Time. Trans. Kitty Hunter-Blair. University of Texas Press, 1986.\n\nVon Trier, Lars — Antichrist (film). 2009.\n\nArrow, Ruaridh — How to Start a Revolution (documentary film, on Gene Sharp). 2011.\n\n────────────────────────────────────────\nWALKING / PLACE / PSYCHOGEOGRAPHY\n\nCampbell, Neil — The Rhizomatic West: Representing the American West in a Transnational, Global, Media Age. University of Nebraska Press, 2008.\n\nChatwin, Bruce — The Songlines. Jonathan Cape, 1987.\n\nIngold, Tim — Lines: A Brief History. Routledge, 2007.\n\nJarry, Alfred — Gestes et opinions du docteur Faustroll, pataphysicien. 1911 (posthumous).\n\nSolnit, Rebecca — Wanderlust: A History of Walking. Viking, 2000.\n\n────────────────────────────────────────\nSIMON BRADLEY — own works referenced\n\nBradley, Simon — \"Top of the World.\" Blog post, 7 April 2009. https://simonbradley.blogspot.com/2009/04/top-of-world.html\n— Mardship Bow (novel in progress). Built around the ritual walk from Armley (Leeds) to Beacon Hill (Halifax), performed at the Winter Solstice, 23+ iterations since c.2000.\n— Magnet Opus (27-hour durational geomagnetic sonification, supported by Arts Council England DYCP grant). Eskdalemuir Observatory data; First Order Ambisonics; REAPER + Python pipeline.\n— Archaeology of the Voice (practice-led PhD).\n— DisplacementActivities (Jekyll/GitHub Pages site). https://displacementactivities.org\n— \"69 Cards\" (oral history HTML project).\n— scb_keep_composer (Python/HTML toolkit for creative text composition).\n— scb_media_scan / scb_media_select / scb_media_section (media archive pipeline).\n— Ontomenator (the present concept-mapping tool).\n\n────────────────────────────────────────\nACKNOWLEDGEMENTS\n\nTo the long arc of conversation, walking, listening, building and arguing that produced these nodes. To the magnetic field for keeping the world held together long enough to think about it. To the bottle top, for being there.\n\n────────────────────────────────────────\nThis bibliography is a working document. Additions and corrections welcome.";
 
@@ -1108,7 +1217,7 @@ const nodes = [
     "audio": "",
     "audioAutoplay": false,
     "image": "",
-    "content": "<p>The distinction at the heart of a certain tradition of thinking about art and meaning — and the distinction that maps most precisely onto the ontomenal framework in aesthetic terms.</p>\n<p id=\"tarkovsky-distinction\">Tarkovsky: <em>\"A symbol contains within itself a definite meaning, certain intellectual formula, while metaphor is an image... metaphor is a being-within-itself, it's a monomial. It falls apart at any attempt of touching it.\"</em> The symbol is closed — it points beyond itself to a pre-given meaning. The metaphor-image is open — indeterminate, self-sufficient, irreducible. What Tarkovsky calls metaphor-image is what ontomena calls being-as-it-shows-itself. The symbol is managed appearance; the metaphor-image is ontomenal showing. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('tarkovsky');return false;\">[Tarkovsky]</a>.</p>\n<p id=\"trojan-horse\">Simon Bradley (2009): \"Symbols are Trojan Horses, loaded with metaphors.\" The symbol appears to be a closed sign but conceals metaphorical depth that can be sprung open. The crucifix: symbolises Christianity (closed, decodable) AND operates as metaphor for suffering, redemption, sacrifice (open, resonant, shifting). The swastika: its symbolic layer forecloses the metaphorical; the history of its use has collapsed the Trojan Horse. Some symbols cannot be reopened. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('von-trier');return false;\">[Von Trier / Antichrist]</a>.</p>\n<p id=\"continuum\">The continuum rather than binary: symbol and metaphor are not cleanly separable categories but poles of a spectrum. All symbols are potentially metaphors; all metaphors risk becoming symbols when their meanings calcify. The political implication: managed appearance works by fixing the symbol, foreclosing its metaphorical depth. Propaganda is the systematic conversion of metaphor-images into symbols — the living showing frozen into a decodable sign. Aisthesis is the capacity to encounter the metaphor-image before it has been fixed. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('aisthesis');return false;\">[Aisthesis]</a>.</p>\n<p id=\"jung\">Jung: symbols as psychological genes, the building blocks of consciousness. Symbols carry radically different individual meanings while preserving \"reverberant ancient/primitive forms\" — the archetype beneath the specific sign. This suggests a third category: the archetypal image, which is neither fixed symbol nor free metaphor but something that resonates with shared deep structure while remaining indeterminate in its specific showing. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('jung-archetype');return false;\">[Jung / Archetype]</a>.</p>\n<p id=\"blogs\">The full development of this in relation to Trier and Tarkovsky: Simon Bradley, 'Symbol and Metaphor in Lars von Trier's Antichrist', Parts 1 and 2 (2009). Part 1: <a target=\"_blank\" href=\"http://simonbradley.blogspot.com/2009/08/symbol-and-metaphor-in-lars-von-triers.html\" target=\"_blank\">August 2009</a>. Part 2: <a target=\"_blank\" href=\"http://simonbradley.blogspot.com/2009/10/symbol-and-metaphor-in-lars-von-triers.html\" target=\"_blank\">October 2009</a>.</p>",
+    "content": "<p>The distinction at the heart of a certain tradition of thinking about art and meaning — and the distinction that maps most precisely onto the ontomenal framework in aesthetic terms.</p>\n<p id=\"tarkovsky-distinction\">Tarkovsky: <em>\"A symbol contains within itself a definite meaning, certain intellectual formula, while metaphor is an image... metaphor is a being-within-itself, it's a monomial. It falls apart at any attempt of touching it.\"</em> The symbol is closed — it points beyond itself to a pre-given meaning. The metaphor-image is open — indeterminate, self-sufficient, irreducible. What Tarkovsky calls metaphor-image is what ontomena calls being-as-it-shows-itself. The symbol is managed appearance; the metaphor-image is ontomenal showing. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('tarkovsky');return false;\">[Tarkovsky]</a>.</p>\n<p id=\"trojan-horse\">In my <a target=\"_blank\" href=\"http://simonbradley.blogspot.com/2009/08/symbol-and-metaphor-in-lars-von-triers.html\" target=\"_blank\">blog article</a>(2009) on Von Trier's Antichrist, I noted: \"Symbols are Trojan Horses, loaded with metaphors.\" The symbol appears to be a closed sign but conceals metaphorical depth that can be sprung open. The crucifix: symbolises Christianity (closed, decodable) AND operates as metaphor for suffering, redemption, sacrifice (open, resonant, shifting). The swastika: its symbolic layer forecloses the metaphorical; the history of its use has collapsed the Trojan Horse. Some symbols cannot be reopened. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('von-trier');return false;\">[Von Trier / Antichrist]</a>.</p>\n<p id=\"continuum\">The continuum rather than binary: symbol and metaphor are not cleanly separable categories but poles of a spectrum. All symbols are potentially metaphors; all metaphors risk becoming symbols when their meanings calcify. The political implication: managed appearance works by fixing the symbol, foreclosing its metaphorical depth. Propaganda is the systematic conversion of metaphor-images into symbols — the living showing frozen into a decodable sign. Aisthesis is the capacity to encounter the metaphor-image before it has been fixed. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('aisthesis');return false;\">[Aisthesis]</a>.</p>\n<p id=\"jung\">Jung: symbols as psychological genes, the building blocks of consciousness. Symbols carry radically different individual meanings while preserving \"reverberant ancient/primitive forms\" — the archetype beneath the specific sign. This suggests a third category: the archetypal image, which is neither fixed symbol nor free metaphor but something that resonates with shared deep structure while remaining indeterminate in its specific showing. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('jung-archetype');return false;\">[Jung / Archetype]</a>.</p>\n<p id=\"blogs\">A full development of this in relation to Trier and Tarkovsky: can be found in my article, 'Symbol and Metaphor in Lars von Trier's Antichrist', Parts 1 and 2 (2009). Part 1: <a target=\"_blank\" href=\"http://simonbradley.blogspot.com/2009/08/symbol-and-metaphor-in-lars-von-triers.html\" target=\"_blank\">August 2009</a>. Part 2: <a target=\"_blank\" href=\"http://simonbradley.blogspot.com/2009/10/symbol-and-metaphor-in-lars-von-triers.html\" target=\"_blank\">October 2009</a>.</p>\n<p>Another layer of complexity concerning political power and symbols is discussed in an excellent <a target=\"_blank\" href=\"https://www.theguardian.com/us-news/2026/jun/07/trump-america-birthday-us-monuments\" target=\"_blank\">Guardian article</a> by Edward Helmore in which he quotes Paul Farber, director of Monument Lab extensively in relation to the 250th anniversary of the USA.\n“The relationship between our symbols and systems of democracy are entangled – and have been since the very beginning of the American experiment. Symbols and systems of power reflect on another,” \nIndeed, Trump has said the Garden of Heroes is a response to “this reckless attempt to erase our heroes, values, and entire way of life” and will feature “statues of the greatest Americans to ever live”.\n\n“In American history the debate about our future is channeled across who gets to write the narrative of the past, and we are in the throes of that right now,” Farber says. “Nothing is inherently a monument, but the objects, artworks and sites we call monuments. They are often more about power, and the way we build and share power, they are about memory.”\n\nAnd then there’s the Garden of Heroes, which Trump proposed in his first term, but is now being rushed into semi-complete form in time for Independence Day. With it will come inscriptions that will generate argument in themselves, as Farber points out.\n\n“To say that Martin Luther King Jr had a can do spirit, or he fought for justice, but to not name the injustice he was fight against, is itself revealing. It’s a kind of Faustian bargain. It’s an elevation of history as representation but without the actual story. The ideological project is more than spotlighting key figures, it’s having the power to tell the story in a way that omits the history.”\n\nThen there’s the problem of what to do with libraries, schools and streets named after Cesar Chavez, the Latin labor leader, who died in 1993, revealed by a New York Times investigation to have been a serial sexual abuser, including of minors.\n\nJ. Savile - victims stet\n\n\n<a class=\"node-link\" href=\"#\" onclick=\"openNode('stet');return false;\">[Stet]</a>\n</p>",
     "colourGroup": 1,
     "fade": 0.28,
     "children": [
@@ -1122,7 +1231,8 @@ const nodes = [
         "color": "hsl(25,50.7%,47.9%)",
         "content": "<p>Carl Gustav Jung (1875–1961). The collective unconscious: a layer of psychic structure shared across human beings, beneath the personal unconscious, constituted by archetypes — primordial patterns of experience and response that manifest differently in different individuals and cultures while preserving shared ancient forms.</p>\n<p id=\"genes\">Jung: symbols as \"the psychological equivalent of genes\" — building blocks of consciousness whose meanings may differ radically from individual to individual whilst still preserving reverberant primitive forms. The Great Mother, the Shadow, the Trickster, the Self. These are not fixed symbols (they don't decode to a single meaning) but something between symbol and metaphor: archetypal images that resonate with shared deep structure while remaining irreducibly indeterminate in their specific showing. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('symbol-metaphor');return false;\">[Symbol / Metaphor / Image]</a>.</p>\n<p id=\"dream\">Jung on the dream image: \"One could say that this dream picture was symbolic, for it did not state the situation directly but expressed the point indirectly by means of a metaphor that I could not at first understand.\" The archetype works like Tarkovsky's metaphor-image: it expresses rather than symbolises; it is indeterminate but not arbitrary; it opens rather than closes. The difference from pure metaphor: the archetype has ontogenetic depth — it is not constructed by the individual but encountered in experience as something already there.</p>\n<p id=\"panonticism\">The panonticist reading: if every entity shows itself, archetypes are the forms through which certain universal modes of showing become accessible to human consciousness. The shadow, the mother, the trickster — these are not the contents of the collective unconscious but the forms through which the unconscious's contents show themselves. Aphanipoiesis: the archetypal image surfaces from below, from processes that were forming unseen. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('aphanipoiesis');return false;\">[Aphanipoiesis]</a>.</p>\n<p id=\"bergson\">The connection to Bergson: archetypes as crystallisations of lived duration — forms that have emerged through the long biological and cultural history of human being and are now part of the structure through which experience arrives. Not eternal Platonic forms but temporal formations that have become constitutive. Memory at the species level. See <a class=\"node-link\" href=\"#\" onclick=\"openNode('bergson');return false;\">[Bergson]</a>.</p>"
       }
-    ]
+    ],
+    "imageCaption": ""
   },
   {
     "id": "dada-bunuel",
@@ -2003,10 +2113,6 @@ const connections = [
   ],
   [
     "onto-mena",
-    "symbol-metaphor"
-  ],
-  [
-    "onto-mena",
     "panonticism"
   ],
   [
@@ -2031,10 +2137,6 @@ const connections = [
   ],
   [
     "foucault-meninas",
-    "symbol-metaphor"
-  ],
-  [
-    "foucault-meninas",
     "edinburgh-ssk"
   ],
   [
@@ -2052,18 +2154,6 @@ const connections = [
   [
     "rebellion",
     "critics"
-  ],
-  [
-    "symbol-metaphor",
-    "aisthesis"
-  ],
-  [
-    "symbol-metaphor",
-    "magic-lantern"
-  ],
-  [
-    "symbol-metaphor",
-    "dada-bunuel"
   ],
   [
     "magic-lantern",
@@ -2096,14 +2186,6 @@ const connections = [
   [
     "dada-bunuel",
     "aisthesis"
-  ],
-  [
-    "symbol-metaphor",
-    "bergson"
-  ],
-  [
-    "symbol-metaphor",
-    "aphanipoiesis"
   ],
   [
     "critics",
@@ -2219,10 +2301,6 @@ const connections = [
   ],
   [
     "dreams",
-    "symbol-metaphor"
-  ],
-  [
-    "dreams",
     "dada-bunuel"
   ],
   [
@@ -2296,10 +2374,6 @@ const connections = [
   [
     "ecstatic-truth",
     "aisthesis"
-  ],
-  [
-    "ecstatic-truth",
-    "symbol-metaphor"
   ],
   [
     "ecstatic-truth",
@@ -2396,10 +2470,6 @@ const connections = [
   [
     "rose",
     "rebellion"
-  ],
-  [
-    "rose",
-    "symbol-metaphor"
   ],
   [
     "aufhebung",
@@ -2531,10 +2601,6 @@ const connections = [
   ],
   [
     "ontomena",
-    "symbol-metaphor"
-  ],
-  [
-    "ontomena",
     "levinas"
   ],
   [
@@ -2560,6 +2626,42 @@ const connections = [
   [
     "heidegger",
     "magnet-opus"
+  ],
+  [
+    "symbol-metaphor",
+    "aisthesis"
+  ],
+  [
+    "symbol-metaphor",
+    "aphanipoiesis"
+  ],
+  [
+    "symbol-metaphor",
+    "dada-bunuel"
+  ],
+  [
+    "symbol-metaphor",
+    "dreams"
+  ],
+  [
+    "symbol-metaphor",
+    "bergson"
+  ],
+  [
+    "symbol-metaphor",
+    "foucault-meninas"
+  ],
+  [
+    "symbol-metaphor",
+    "magic-lantern"
+  ],
+  [
+    "symbol-metaphor",
+    "ontomena"
+  ],
+  [
+    "symbol-metaphor",
+    "rose"
   ]
 ];
 
@@ -2651,6 +2753,7 @@ function renderNodes(){
         const angle=n===1?0:(i/(n-1)-0.5)*Math.PI*0.85;
         const cx=child.x!==undefined?child.x:node.x+Math.sin(angle)*230;
         const cy=child.y!==undefined?child.y:node.y+170+Math.abs(Math.cos(angle))*30;
+        child.x=cx; child.y=cy;
         renderSingleNode(child,true,node,cx,cy);
       });
     }
@@ -2678,8 +2781,10 @@ function handlePreview(e) {
     previewEl.innerHTML=`<div style="font-size:10px;font-family:'DM Mono',monospace;color:${col};margin-bottom:4px">${node.category}</div><strong style="font-size:15px;color:var(--text-bright)">${node.title}</strong><div style="font-size:11px;color:var(--text-dim);margin-bottom:8px">${node.subtitle}</div><div style="font-size:13px;line-height:1.6;color:var(--text)">${c.replace(/<[^>]+>/g,'').substring(0,200)}…</div>`;
     const rect=target.getBoundingClientRect();
     previewEl.style.left=(rect.right+10)+'px';
-    previewEl.style.top=Math.min(rect.top,window.innerHeight-250)+'px';
+    previewEl.style.top='-9999px';
     previewEl.classList.add('visible');
+    const popH=previewEl.offsetHeight;
+    previewEl.style.top=Math.max(10,(rect.top - popH - 10))+'px';
   },400);
 }
 
@@ -2737,7 +2842,7 @@ function clearSelected(){
   selectedNodeId=null;
 }
 
-function openReading(id){const node=findNodeById(id);if(!node)return;previewEl.classList.remove('visible');clearTimeout(previewDelayTimeout);previewNodeId=null;if(currentReadingId&&currentReadingId!==id)navHistory.push(currentReadingId);currentReadingId=id;editMode=false;clearSelected();const _be=document.getElementById('btn-edit');if(_be)_be.textContent='[ edit ]';showViewMode(node);readingOverlay.classList.add('visible');}
+function openReading(id){const node=findNodeById(id);if(!node)return;previewEl.classList.remove('visible');clearTimeout(previewDelayTimeout);previewNodeId=null;if(currentReadingId&&currentReadingId!==id)navHistory.push(currentReadingId);currentReadingId=id;editMode=false;clearSelected();document.getElementById('reading-panel').scrollTop=0;const _be=document.getElementById('btn-edit');if(_be)_be.textContent='[ edit ]';showViewMode(node);readingOverlay.classList.add('visible');}
 function downloadNodeText(){
   const node=findNodeById(currentReadingId);
   if(!node)return;
@@ -3383,7 +3488,7 @@ function fitAll(){let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
 // ============================================================
 // SETTINGS
 // ============================================================
-function openSettings(){document.getElementById('settings-overlay').classList.add('visible');document.getElementById('set-bg-path').value=bgImagePath;document.getElementById('set-bg-opacity').value=Math.round(bgOpacity*100);document.getElementById('set-bg-opacity-val').textContent=Math.round(bgOpacity*100)+'%';document.getElementById('set-project-title').value=projectTitle;document.getElementById('set-strapline').value=projectStrapline;document.getElementById('set-aspects-label').value=aspectsLabel;document.getElementById('set-home-node').value=homeNodeId;}
+function openSettings(){document.getElementById('settings-overlay').classList.add('visible');document.getElementById('set-bg-path').value=bgImagePath;document.getElementById('set-bg-opacity').value=Math.round(bgOpacity*100);document.getElementById('set-bg-opacity-val').textContent=Math.round(bgOpacity*100)+'%';document.getElementById('set-project-title').value=projectTitle;document.getElementById('set-strapline').value=projectStrapline;document.getElementById('set-aspects-label').value=aspectsLabel;document.getElementById('set-home-node').value=homeNodeId;document.getElementById('set-intro').value=introductionText;}
 function closeSettings(){document.getElementById('settings-overlay').classList.remove('visible');}
 document.getElementById('settings-overlay').addEventListener('click',e=>{if(e.target.id==='settings-overlay')closeSettings();});
 function applyBgPath(){bgImagePath=document.getElementById('set-bg-path').value;document.getElementById('bg-image').style.backgroundImage=bgImagePath?`url('${bgImagePath}')`:'none';}
@@ -3463,42 +3568,59 @@ document.getElementById('glossary-overlay').addEventListener('click',e=>{if(e.ta
 
 // ── ROUTE SHUFFLE ─────────────────────────────────────────────
 let preShuffle = null;
+let originalRoute = null;
+let showingShuffled = false;
 
 function shuffleRoute(){
   if(!READ_ONLY){
-    // Edit mode: offer to save first
     const choice = confirm('Save current route before shuffling?\n\nOK = save then shuffle\nCancel = shuffle without saving');
     if(choice) exportHTML();
   } else {
-    // Read-only mode: show toast
     const existing=document.getElementById('shuffle-toast');if(existing)existing.remove();
     const msg = document.createElement('div');
     msg.id='shuffle-toast';
     msg.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--bg-reading);border:1px solid var(--accent-dim);color:var(--text-dim);font-family:"JetBrains Mono",monospace;font-size:12px;padding:10px 18px;z-index:5000;pointer-events:none;';
-    msg.textContent='Shuffled. Refresh page to return to original route.';
+    msg.textContent='Shuffled. Use restore route to return to original order.';
     document.body.appendChild(msg);
     setTimeout(()=>{const el=document.getElementById('shuffle-toast');if(el)el.remove();},3500);
   }
+  // Store original route on very first shuffle only
+  if(!originalRoute) originalRoute=[...tourRoute];
   preShuffle=[...tourRoute];
-  // Fisher-Yates shuffle
   const arr=[...tourRoute];
   for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
   tourRoute.splice(0,tourRoute.length,...arr);
-  renderRouteList();
-  updateConnections();
-  // Show restore button if in edit mode
-  const rb=document.getElementById('btn-restore-shuffle');
-  if(rb)rb.style.display='inline-block';
+  showingShuffled=true;
+  renderRouteList();updateConnections();
+  updateRestoreRouteBtn();
 }
 
 function restorePreShuffle(){
-  if(!preShuffle)return;
-  tourRoute.splice(0,tourRoute.length,...preShuffle);
-  preShuffle=null;
-  renderRouteList();
-  updateConnections();
+  if(!originalRoute)return;
+  if(showingShuffled){
+    // Restore to original
+    preShuffle=[...tourRoute];
+    tourRoute.splice(0,tourRoute.length,...originalRoute);
+    showingShuffled=false;
+  } else {
+    // Toggle back to last shuffle
+    if(!preShuffle)return;
+    tourRoute.splice(0,tourRoute.length,...preShuffle);
+    showingShuffled=true;
+  }
+  renderRouteList();updateConnections();
+  updateRestoreRouteBtn();
+}
+
+function updateRestoreRouteBtn(){
   const rb=document.getElementById('btn-restore-shuffle');
-  if(rb)rb.style.display='none';
+  if(!rb)return;
+  if(originalRoute){
+    rb.style.display='inline-block';
+    rb.textContent=showingShuffled?'restore route':'restore shuffle';
+  } else {
+    rb.style.display='none';
+  }
 }
 
 
@@ -3578,6 +3700,150 @@ function applyProjectTitle(){projectTitle=document.getElementById('set-project-t
 function applyStrapline(){projectStrapline=document.getElementById('set-strapline').value;const el=document.getElementById('project-strapline-display');if(el)el.textContent=projectStrapline;}
 function applyAspectsLabel(){aspectsLabel=document.getElementById('set-aspects-label').value;}
 function applyHomeNode(){homeNodeId=document.getElementById('set-home-node').value;}
+function applyIntro(){introductionText=document.getElementById('set-intro').value;}
+
+// ── CODE SNIPPETS ─────────────────────────────────────────────
+const CODE_SNIPPETS = [
+  {label:'Italic — key terms, coinages',    code:'<em>word</em>'},
+  {label:'Italic — plain emphasis',          code:'<i>word</i>'},
+  {label:'Bold — semantic',                  code:'<strong>word</strong>'},
+  {label:'Bold — plain',                     code:'<b>word</b>'},
+  {label:'Monospace — inline technical',     code:'<code>word</code>'},
+  {label:'Paragraph',                        code:'<p>Your text here.</p>'},
+  {label:'Line break',                       code:'<br>'},
+  {label:'Blank line gap',                   code:'<br><br>'},
+  {label:'Ordered list',                     code:'<ol style="margin-left:24px;">\n  <li>First item</li>\n  <li>Second item</li>\n</ol>'},
+  {label:'Unordered list',                   code:'<ul style="margin-left:24px;">\n  <li>Item</li>\n</ul>'},
+  {label:'Node link',                        code:'<a class="node-link" href="#" onclick="openNode(\'node-id\');return false;">[Display Text]</a>'},
+  {label:'External link',                    code:'<a href="https://example.com" target="_blank">Link text</a>'},
+  {label:'Image / audio slot',               code:'<div class="media-slot">[ image / audio slot ]</div>'},
+  {label:'Anchor marker (scroll target)',    code:'{#anchorname}'},
+  {label:'Indented quote / poem block',      code:'<p style="margin-left:24px;font-style:italic;color:var(--text-dim);">Your text here.</p>'},
+  {label:'Pandoc link placeholder',          code:'LINK[node-id|Display Text]'},
+];
+
+function openCodeSnippets(){
+  const list=document.getElementById('code-snippets-list');
+  list.innerHTML=CODE_SNIPPETS.map((s,i)=>`
+    <div style="margin-bottom:14px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--rule);border-radius:6px;">
+      <div style="font-size:11px;color:var(--text-dim);font-family:'DM Mono','JetBrains Mono',monospace;margin-bottom:6px;">${s.label}</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <code style="flex:1;font-size:12px;color:var(--accent-bright);white-space:pre;font-family:'JetBrains Mono',monospace;word-break:break-all;">${esc(s.code)}</code>
+        <button onclick="copySnippet(${i})" id="copy-btn-${i}" style="font-size:11px;font-family:'JetBrains Mono',monospace;white-space:nowrap;padding:4px 10px;flex-shrink:0;">copy</button>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('code-overlay').style.display='flex';
+}
+
+function closeCodeSnippets(){document.getElementById('code-overlay').style.display='none';}
+
+function copySnippet(i){
+  navigator.clipboard.writeText(CODE_SNIPPETS[i].code).then(()=>{
+    const btn=document.getElementById('copy-btn-'+i);
+    if(btn){btn.textContent='copied!';setTimeout(()=>{btn.textContent='copy';},1500);}
+  }).catch(()=>{
+    // Fallback for browsers without clipboard API
+    const ta=document.createElement('textarea');
+    ta.value=CODE_SNIPPETS[i].code;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    const btn=document.getElementById('copy-btn-'+i);
+    if(btn){btn.textContent='copied!';setTimeout(()=>{btn.textContent='copy';},1500);}
+  });
+}
+// ── END CODE SNIPPETS ─────────────────────────────────────────
+function toggleCtrlGroup(id){
+  const dd=document.getElementById('dd-'+id.replace('ctrl-',''));
+  const isOpen=dd.classList.contains('open');
+  closeCtrlGroups();
+  if(!isOpen)dd.classList.add('open');
+}
+function closeCtrlGroups(){document.querySelectorAll('.ctrl-dropdown').forEach(d=>d.classList.remove('open'));}
+document.addEventListener('click',e=>{if(!e.target.closest('.ctrl-group'))closeCtrlGroups();});
+
+// ── INTRODUCTION PANEL ────────────────────────────────────────
+function openIntroPanel(){
+  const panel=document.getElementById('intro-panel-title');
+  if(panel)panel.textContent=projectTitle+' — Introduction';
+  const viewText=document.getElementById('intro-view-text');
+  if(viewText)viewText.innerHTML=introductionText||'<p style="color:var(--text-dim);font-style:italic;">No introduction text set. Click edit to add one.</p>';
+  const editBtn=document.getElementById('btn-intro-edit');
+  if(editBtn)editBtn.style.display=READ_ONLY?'none':'';
+  document.getElementById('intro-overlay').classList.add('visible');
+}
+function closeIntroPanel(){document.getElementById('intro-overlay').classList.remove('visible');}
+function showIntroEdit(){
+  document.getElementById('intro-view').style.display='none';
+  document.getElementById('intro-edit').style.display='block';
+  document.getElementById('intro-textarea').value=introductionText;
+}
+function closeIntroEdit(){
+  document.getElementById('intro-edit').style.display='none';
+  document.getElementById('intro-view').style.display='block';
+}
+function saveIntroText(){
+  introductionText=document.getElementById('intro-textarea').value;
+  const viewText=document.getElementById('intro-view-text');
+  if(viewText)viewText.innerHTML=introductionText||'';
+  closeIntroEdit();
+  hasUnsavedChanges=true;
+}
+
+// ── ANIMATED TOUR ─────────────────────────────────────────────
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+function animatePanZoom(targetPanX, targetPanY, targetScale, dur, easeFn){
+  return new Promise(resolve=>{
+    const sx=panX,sy=panY,ss=scale,st=performance.now();
+    const eFn=easeFn||function(p){return p<0.5?2*p*p:-1+(4-2*p)*p;};
+    function anim(t){
+      const p=Math.min((t-st)/dur,1),ease=eFn(p);
+      panX=sx+(targetPanX-sx)*ease;panY=sy+(targetPanY-sy)*ease;scale=ss+(targetScale-ss)*ease;
+      updateTransform();if(p<1)requestAnimationFrame(anim);else resolve();
+    }
+    requestAnimationFrame(anim);
+  });
+}
+
+let _tourSpaceResolve = null;
+function waitForTourSpace(){return new Promise(r=>{_tourSpaceResolve=r;});}
+
+async function animatedTourStep(nodeId){
+  closeReading();
+  // Compute fit-all target
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  nodes.forEach(n=>{minX=Math.min(minX,n.x);minY=Math.min(minY,n.y);maxX=Math.max(maxX,n.x+260);maxY=Math.max(maxY,n.y+100);});
+  const cr=container.getBoundingClientRect(),rx=maxX-minX+200,ry=maxY-minY+200;
+  const fitScale=Math.min(cr.width/rx,cr.height/ry,1.5)*0.5;
+  const fitPanX=(cr.width-rx*fitScale)/2-minX*fitScale;
+  const fitPanY=(cr.height-ry*fitScale)/2-minY*fitScale;
+  // Zoom out — ease-in-cubic: slow departure, accelerates into pull-back
+  const easeInCubic=p=>p*p*p;
+  await animatePanZoom(fitPanX,fitPanY,fitScale,520,easeInCubic);
+  // Pause on full map
+  await delay(450);
+  // Compute zoom-to-node target
+  const node=findNodeById(nodeId);if(!node)return;
+  const ts=1.0;
+  const tx=cr.width/2-node.x*ts-85;const ty=cr.height/2-node.y*ts-80;
+  // Zoom in — ease-out-cubic: rushes in, settles gracefully
+  const easeOutCubic=p=>1-Math.pow(1-p,3);
+  await animatePanZoom(tx,ty,ts,620,easeOutCubic);
+  // Wait for spacebar — user controls when panel opens
+  await waitForTourSpace();
+  openReading(nodeId);updateTourStep();
+}
+
+function toggleAnimatedTour(){
+  animatedTour=!animatedTour;
+  const btn=document.getElementById('btn-anim-tour');
+  if(btn)btn.classList.toggle('anim-active',animatedTour);
+  if(animatedTour&&!document.fullscreenElement){
+    document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+  } else if(!animatedTour&&document.fullscreenElement){
+    document.exitFullscreen&&document.exitFullscreen();
+  }
+}
+// ── END NEW FUNCTIONS ─────────────────────────────────────────
 
 function findCentreNode() {
   const container = document.getElementById('canvas-container');
@@ -3642,7 +3908,8 @@ function navigatePanel(dir) {
   const idx = tourRoute.indexOf(currentReadingId);
   if(idx === -1) return;
   const newIdx = (idx + dir + tourRoute.length) % tourRoute.length;
-  openReading(tourRoute[newIdx]);
+  tourIndex = newIdx;
+  if(animatedTour) { animatedTourStep(tourRoute[newIdx]); } else { openReading(tourRoute[newIdx]); }
 }
 
 function updatePanelNav(node) {
@@ -3688,6 +3955,7 @@ function exportPublicHTML(){closeReading();closeBibPanel();closeGlossaryPanel();
   src=src.replace(/let projectStrapline = .*;/,'let projectStrapline = '+JSON.stringify(projectStrapline)+';');
   src=src.replace(/let aspectsLabel = .*;/,'let aspectsLabel = '+JSON.stringify(aspectsLabel)+';');
   src=src.replace(/let homeNodeId = .*;/,'let homeNodeId = '+JSON.stringify(homeNodeId)+';');
+  src=src.replace(/let introductionText = .*;/,'let introductionText = '+JSON.stringify(introductionText)+';');
   // Strip edit controls for public version
   src=src.replace(/<button[^>]*onclick="addNewNode\(\)"[^>]*>.*?<\/button>/g,'');
   src=src.replace(/<button[^>]*onclick="exportHTML\(\)"[^>]*>.*?<\/button>/g,'');
@@ -3708,7 +3976,7 @@ document.addEventListener('keydown', e => {
   const tag=document.activeElement.tagName;
   const inInput=(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT');
   // Arrow key panning — works even in input only if not focused
-  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key) && !inInput) {
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key) && !inInput && !slideshowActive) {
     e.preventDefault();
     // L/R navigate aspects when an aspect is open
     if((e.key==='ArrowLeft'||e.key==='ArrowRight') && currentReadingId && readingOverlay.classList.contains('visible')) {
@@ -3725,6 +3993,13 @@ document.addEventListener('keydown', e => {
     if(e.key==='Escape'){exitSlideshow();return;}
     if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();slideNext();return;}
     if(e.key==='ArrowLeft'){e.preventDefault();slidePrev();return;}
+    return;
+  }
+  // Animated tour spacebar controls
+  if(animatedTour&&e.key===' '){
+    e.preventDefault();
+    if(_tourSpaceResolve){_tourSpaceResolve();_tourSpaceResolve=null;}
+    else if(readingOverlay.classList.contains('visible')){navigatePanel(1);}
     return;
   }
   if(e.key==='Escape'){
@@ -3758,7 +4033,7 @@ document.addEventListener('webkitfullscreenchange', () => { if (!document.webkit
 // ============================================================
 // EXPORT
 // ============================================================
-function exportHTML(){closeReading();closeBibPanel();closeGlossaryPanel();hideShortcutsOverlay();expandedNodes.clear();renderNodes();updateConnections();hasUnsavedChanges=false;const fullHTML=document.documentElement.outerHTML;const nodesJSON=JSON.stringify(nodes,null,2),connectionsJSON=JSON.stringify(connections,null,2),tourJSON=JSON.stringify(tourRoute,null,2),bgPath=JSON.stringify(bgImagePath),bgOp=bgOpacity,bibJSON=JSON.stringify(bibliographyText),ackJSON=JSON.stringify(acknowledgementsText);let src='<!DOCTYPE html>\n'+fullHTML;src=src.replace(/const nodes = \[[\s\S]*?\n\];/,'const nodes = '+nodesJSON+';');src=src.replace(/const connections = \[[\s\S]*?\n\];/,'const connections = '+connectionsJSON+';');src=src.replace(/let tourRoute = \[[\s\S]*?\n\];/,'let tourRoute = '+tourJSON+';');src=src.replace(/let bgImagePath = .*;/,`let bgImagePath = ${bgPath};`);src=src.replace(/let bgOpacity = .*;/,`let bgOpacity = ${bgOp};`);src=src.replace(/let bibliographyText = (?:`[\s\S]*?`|"(?:[^"\\]|\\.)*");/,'let bibliographyText = '+bibJSON+';');src=src.replace(/let acknowledgementsText = .*;/,'let acknowledgementsText = '+ackJSON+';');src=src.replace(/let projectTitle = .*;/,'let projectTitle = '+JSON.stringify(projectTitle)+';');src=src.replace(/let projectStrapline = .*;/,'let projectStrapline = '+JSON.stringify(projectStrapline)+';');src=src.replace(/let aspectsLabel = .*;/,'let aspectsLabel = '+JSON.stringify(aspectsLabel)+';');src=src.replace(/let homeNodeId = .*;/,'let homeNodeId = '+JSON.stringify(homeNodeId)+';');const blob=new Blob([src],{type:'text/html'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ontomena-map.html';a.click();URL.revokeObjectURL(url);}
+function exportHTML(){closeReading();closeBibPanel();closeGlossaryPanel();hideShortcutsOverlay();expandedNodes.clear();renderNodes();updateConnections();hasUnsavedChanges=false;const fullHTML=document.documentElement.outerHTML;const nodesJSON=JSON.stringify(nodes,null,2),connectionsJSON=JSON.stringify(connections,null,2),tourJSON=JSON.stringify(tourRoute,null,2),bgPath=JSON.stringify(bgImagePath),bgOp=bgOpacity,bibJSON=JSON.stringify(bibliographyText),ackJSON=JSON.stringify(acknowledgementsText);let src='<!DOCTYPE html>\n'+fullHTML;src=src.replace(/const nodes = \[[\s\S]*?\n\];/,'const nodes = '+nodesJSON+';');src=src.replace(/const connections = \[[\s\S]*?\n\];/,'const connections = '+connectionsJSON+';');src=src.replace(/let tourRoute = \[[\s\S]*?\n\];/,'let tourRoute = '+tourJSON+';');src=src.replace(/let bgImagePath = .*;/,`let bgImagePath = ${bgPath};`);src=src.replace(/let bgOpacity = .*;/,`let bgOpacity = ${bgOp};`);src=src.replace(/let bibliographyText = (?:`[\s\S]*?`|"(?:[^"\\]|\\.)*");/,'let bibliographyText = '+bibJSON+';');src=src.replace(/let acknowledgementsText = .*;/,'let acknowledgementsText = '+ackJSON+';');src=src.replace(/let projectTitle = .*;/,'let projectTitle = '+JSON.stringify(projectTitle)+';');src=src.replace(/let projectStrapline = .*;/,'let projectStrapline = '+JSON.stringify(projectStrapline)+';');src=src.replace(/let aspectsLabel = .*;/,'let aspectsLabel = '+JSON.stringify(aspectsLabel)+';');src=src.replace(/let homeNodeId = .*;/,'let homeNodeId = '+JSON.stringify(homeNodeId)+';');src=src.replace(/let introductionText = .*;/,'let introductionText = '+JSON.stringify(introductionText)+';');const blob=new Blob([src],{type:'text/html'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ontomena-map.html';a.click();URL.revokeObjectURL(url);}
 
 // ============================================================
 // EXPORT ROUTE AS DOCUMENT
@@ -3865,7 +4140,23 @@ function exportRouteDoc() {
 // ============================================================
 renderNodes();updateTransform();setTimeout(updateConnections,100);setTimeout(focusHome,400);window.addEventListener('resize',updateConnections);
 // Apply project settings to display
-(function(){const t=document.getElementById('project-title-display');if(t)t.textContent=projectTitle;const s=document.getElementById('project-strapline-display');if(s)s.textContent=projectStrapline;})();
+(function(){
+  const t=document.getElementById('project-title-display');if(t)t.textContent=projectTitle;
+  const s=document.getElementById('project-strapline-display');if(s)s.textContent=projectStrapline;
+  // READ_ONLY: hide edit controls, show public-only items
+  if(READ_ONLY){
+    ['ctrl-arrange','btn-add-node','btn-settings','ctrl-export'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.style.display='none';
+    });
+    document.querySelectorAll('[onclick="startSlideshow()"]').forEach(el=>el.style.display='none');
+    const rsh=document.getElementById('btn-restore-shuffle');if(rsh)rsh.style.display='none';
+    const btnAnim=document.getElementById('btn-anim-tour');if(btnAnim)btnAnim.style.display='none';
+    const btnCode=document.getElementById('btn-code-snippets');if(btnCode)btnCode.style.display='none';
+    // Show public-only info items
+    const intro=document.getElementById('btn-intro-info');if(intro&&introductionText)intro.style.display='';
+    const edoc=document.getElementById('btn-export-doc-info');if(edoc)edoc.style.display='';
+  }
+})();
 window.addEventListener('beforeunload',e=>{if(hasUnsavedChanges){e.preventDefault();e.returnValue='';}});
 if(bgImagePath)document.getElementById('bg-image').style.backgroundImage=`url('${bgImagePath}')`;
 document.getElementById('bg-image').style.opacity=bgOpacity;
