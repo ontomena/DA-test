@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Mardship Bow — Pointers</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; overflow:hidden; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background:#0a0e1a; color:#f4f1ea;
+    display:flex; flex-direction:column; height:100dvh;
+    transition:background 0.6s ease;
+    user-select:none; -webkit-user-select:none;
+  }
+  .bar { height:3px; background:rgba(255,255,255,0.12); }
+  .bar-fill { height:100%; background:rgba(255,255,255,0.7); transition:width 0.3s ease; }
+
+  .stage { flex:1; display:flex; align-items:center; justify-content:center; padding:14px; position:relative; overflow:hidden; }
+  .card {
+    width:min(88vw,372px); aspect-ratio:5/7.6; max-height:80dvh;
+    background:linear-gradient(160deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+    border:1px solid rgba(255,255,255,0.18); border-radius:18px;
+    box-shadow:0 18px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12);
+    padding:22px 22px 18px; display:flex; flex-direction:column; position:relative; will-change:transform,opacity;
+  }
+  .card.out-left  { animation:outLeft 0.22s ease forwards; }
+  .card.out-right { animation:outRight 0.22s ease forwards; }
+  .card.in-right  { animation:inRight 0.26s ease; }
+  .card.in-left   { animation:inLeft 0.26s ease; }
+  @keyframes outLeft { to { transform:translateX(-60px) rotate(-3deg); opacity:0; } }
+  @keyframes outRight{ to { transform:translateX(60px) rotate(3deg); opacity:0; } }
+  @keyframes inRight { from { transform:translateX(60px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+  @keyframes inLeft  { from { transform:translateX(-60px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+  .card-top { display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid rgba(255,255,255,0.16); padding-bottom:9px; }
+  .num { font-family:'Courier New',monospace; font-size:13px; letter-spacing:0.15em; opacity:0.7; }
+  .station { font-family:'Courier New',monospace; font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase;
+    padding:3px 8px; border:1px solid rgba(255,255,255,0.35); border-radius:20px; opacity:0; }
+  .station.show { opacity:0.85; }
+
+  .name-wrap { padding:16px 0 6px; }
+  .name { font-size:clamp(24px,7vw,36px); line-height:1.08; font-weight:normal; letter-spacing:-0.01em; }
+
+  .pitch-block { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+  .pitch-hz { font-family:'Courier New',monospace; font-size:clamp(38px,12vw,56px); font-weight:bold; line-height:1; letter-spacing:-0.02em; }
+  .pitch-unit { font-size:0.4em; opacity:0.55; font-weight:normal; }
+  .pitch-note { font-size:16px; font-style:italic; opacity:0.8; min-height:20px; }
+
+  .controls-row { display:flex; align-items:center; justify-content:center; gap:18px; margin:14px 0 6px; }
+  .ctl {
+    width:58px; height:58px; border-radius:50%;
+    border:1px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.06);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:background 0.2s,border-color 0.2s,box-shadow 0.3s; position:relative; flex:0 0 auto;
+  }
+  .ctl svg { width:26px; height:26px; display:block; }
+  .ctl:active { background:rgba(255,255,255,0.16); }
+
+  .speaker .slash { transition:opacity 0.2s; }
+  .speaker.sounding { background:rgba(255,255,255,0.16); border-color:rgba(255,255,255,0.6); animation:pulse 2s ease-out infinite; }
+  .speaker.sounding .slash { opacity:0; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(255,255,255,0.35);} 70%{box-shadow:0 0 0 16px rgba(255,255,255,0);} 100%{box-shadow:0 0 0 0 rgba(255,255,255,0);} }
+
+  .rec .dot { width:16px; height:16px; border-radius:50%; background:#e2574c; transition:all 0.2s; }
+  .rec.recording { border-color:rgba(226,87,76,0.9); animation:pulseRed 1.4s ease-out infinite; }
+  .rec.recording .dot { border-radius:3px; width:15px; height:15px; }
+  @keyframes pulseRed { 0%{box-shadow:0 0 0 0 rgba(226,87,76,0.5);} 70%{box-shadow:0 0 0 16px rgba(226,87,76,0);} 100%{box-shadow:0 0 0 0 rgba(226,87,76,0);} }
+
+  .compass { overflow:hidden; }
+  .compass .rose { width:50px; height:50px; position:relative; transition:transform 0.12s linear; }
+  .compass .needle-n { position:absolute; top:1px; left:50%; transform:translateX(-50%); font:bold 10px 'Courier New',monospace; color:#e2574c; }
+  .compass .tick { position:absolute; top:0; left:50%; width:2px; height:7px; background:rgba(255,255,255,0.55); transform-origin:50% 25px; transform:translateX(-50%); }
+  .compass .bearing-mark { position:absolute; top:-1px; left:50%; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:9px solid #6fb3e0; transform-origin:50% 26px; transform:translateX(-50%); opacity:0; }
+  .compass .bearing-mark.show { opacity:1; }
+
+  .status { text-align:center; font-family:'Courier New',monospace; font-size:11px; letter-spacing:0.08em; opacity:0.65; min-height:16px; margin-bottom:8px; }
+  .status .rectime { color:#e2574c; opacity:1; }
+
+  .data { border-top:1px solid rgba(255,255,255,0.16); padding-top:10px; display:flex; flex-direction:column; gap:6px;
+    font-family:'Courier New',monospace; font-size:11px; }
+  .data .row { display:flex; justify-content:space-between; }
+  .data .lab { opacity:0.5; letter-spacing:0.05em; }
+  .tide { color:#8fe3b0; }
+
+  .controls { display:flex; align-items:center; justify-content:space-between; padding:12px 22px calc(12px + env(safe-area-inset-bottom)); gap:14px; }
+  .nav { flex:1; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); color:#f4f1ea;
+    font-family:'Courier New',monospace; font-size:13px; letter-spacing:0.1em; padding:13px 0; border-radius:12px; cursor:pointer; transition:background 0.15s; }
+  .nav:active { background:rgba(255,255,255,0.18); }
+  .nav:disabled { opacity:0.3; }
+  .counter { font-family:'Courier New',monospace; font-size:14px; letter-spacing:0.08em; min-width:72px; text-align:center; opacity:0.85; }
+  .counter .of { opacity:0.5; }
+
+  .overlay { position:fixed; inset:0; background:rgba(8,10,20,0.93); display:none; align-items:center; justify-content:center; flex-direction:column; z-index:50; padding:20px; }
+  .overlay.show { display:flex; }
+  .big-rose { width:min(74vw,300px); height:min(74vw,300px); position:relative; transition:transform 0.1s linear; }
+  .big-rose .card-ring { position:absolute; inset:0; border:2px solid rgba(255,255,255,0.25); border-radius:50%; }
+  .big-rose .lbl { position:absolute; font:bold 18px 'Courier New',monospace; transform:translate(-50%,-50%); }
+  .big-rose .lbl.n { top:6%; left:50%; color:#e2574c; }
+  .big-rose .lbl.e { top:50%; left:94%; }
+  .big-rose .lbl.s { top:94%; left:50%; }
+  .big-rose .lbl.w { top:50%; left:6%; }
+  .big-rose .big-bearing { position:absolute; top:0; left:50%; width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:24px solid #6fb3e0; transform-origin:50% calc(min(37vw,150px)); transform:translateX(-50%); opacity:0; }
+  .big-rose .big-bearing.show { opacity:1; }
+  .ov-status { margin-top:26px; font-family:'Courier New',monospace; font-size:14px; letter-spacing:0.08em; text-align:center; opacity:0.85; line-height:1.7; }
+  .ov-close { margin-top:24px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.25); color:#f4f1ea;
+    font-family:'Courier New',monospace; font-size:13px; letter-spacing:0.12em; padding:12px 28px; border-radius:12px; cursor:pointer; }
+</style>
+</head>
+<body>
+  <div class="bar"><div class="bar-fill" id="bar"></div></div>
+  <div class="stage" id="stage"><div class="card" id="card"></div></div>
+  <div class="controls">
+    <button class="nav" id="prev">‹ BACK</button>
+    <div class="counter"><span id="cur">1</span><span class="of"> / 41</span></div>
+    <button class="nav" id="next">NEXT ›</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="big-rose" id="bigRose">
+      <div class="card-ring"></div>
+      <div class="lbl n">N</div><div class="lbl e">E</div><div class="lbl s">S</div><div class="lbl w">W</div>
+      <div class="big-bearing" id="bigBearing"></div>
+    </div>
+    <div class="ov-status" id="ovStatus">point the top of the phone away from you</div>
+    <button class="ov-close" id="ovClose">CLOSE</button>
+  </div>
+
+<script>
+const POINTERS = [
+  {n:1,name:"Charlie Apex",hz:554.37,note:"C sharp",rm:111,mbm:62,lat:53.797878,lon:-1.604622,station:"Walk start",tide:false},
+  {n:2,name:"Arch'es Elbow",hz:542,note:"",rm:94,mbm:45,lat:53.795777,lon:-1.609222,station:"",tide:false},
+  {n:3,name:"Litteramid",hz:532,note:"",rm:91,mbm:42,lat:53.795680,lon:-1.605600,station:"",tide:false},
+  {n:4,name:"Cabbage Hill",hz:523.25,note:"C natural",rm:121,mbm:72,lat:53.790760,lon:-1.598496,station:"",tide:false},
+  {n:5,name:"Lo Point",hz:508,note:"A sharp",rm:49,mbm:0,lat:53.786480,lon:-1.607080,station:"Sea level anchor",tide:true},
+  {n:6,name:"Church of Tides",hz:499,note:"",rm:53,mbm:4,lat:53.784960,lon:-1.609360,station:"",tide:true},
+  {n:7,name:"Hell Hole",hz:483,note:"",rm:81,mbm:32,lat:53.781667,lon:-1.616084,station:"",tide:false},
+  {n:8,name:"Ash Brow",hz:473.2,note:"",rm:122,mbm:73,lat:53.779540,lon:-1.628780,station:"",tide:false},
+  {n:9,name:"Gilbert the Guinea Pig",hz:466.16,note:"A sharp",rm:123,mbm:74,lat:53.775590,lon:-1.633090,station:"",tide:false},
+  {n:10,name:"Nan Whins Whale",hz:448,note:"",rm:99,mbm:50,lat:53.773100,lon:-1.642100,station:"",tide:false},
+  {n:11,name:"Nightmare House",hz:438.2,note:"",rm:129,mbm:80,lat:53.762810,lon:-1.650680,station:"",tide:false},
+  {n:12,name:"Andrew Hill",hz:426,note:"",rm:161,mbm:112,lat:53.757110,lon:-1.639480,station:"",tide:false},
+  {n:13,name:"Adwalton Hololibrare",hz:415.30,note:"G sharp",rm:181,mbm:132,lat:53.752750,lon:-1.663170,station:"1st Station",tide:false},
+  {n:14,name:"Sacred Cows",hz:403.60,note:"",rm:192,mbm:143,lat:53.754140,lon:-1.673240,station:"",tide:false},
+  {n:15,name:"Cold Hodgson",hz:392,note:"G natural",rm:196,mbm:147,lat:53.755540,lon:-1.682420,station:"",tide:false},
+  {n:16,name:"Pies",hz:380,note:"",rm:185,mbm:136,lat:53.752470,lon:-1.694240,station:"",tide:false},
+  {n:17,name:"Krill's Canal",hz:369.99,note:"F sharp",rm:166,mbm:117,lat:53.748520,lon:-1.697865,station:"",tide:false},
+  {n:18,name:"Pavement",hz:365,note:"",rm:148,mbm:99,lat:53.749967,lon:-1.702206,station:"",tide:false},
+  {n:19,name:"Hitchcock",hz:356.66,note:"",rm:182,mbm:133,lat:53.752650,lon:-1.709240,station:"",tide:false},
+  {n:20,name:"Mirror Lake",hz:349.23,note:"F natural",rm:109,mbm:60,lat:53.747661,lon:-1.725073,station:"",tide:false},
+  {n:21,name:"Church of Tyres",hz:338,note:"",rm:125,mbm:76,lat:53.746079,lon:-1.736265,station:"",tide:false},
+  {n:22,name:"Cow Dial",hz:329.63,note:"E natural",rm:131,mbm:82,lat:53.746169,lon:-1.738365,station:"",tide:false},
+  {n:23,name:"Hatchet Bridge",hz:323.21,note:"",rm:132,mbm:83,lat:53.743521,lon:-1.739136,station:"2nd Station",tide:false},
+  {n:24,name:"Hogweed",hz:316.79,note:"",rm:117,mbm:68,lat:53.734710,lon:-1.736429,station:"",tide:false},
+  {n:25,name:"Force Right",hz:311.13,note:"D sharp",rm:122,mbm:73,lat:53.731150,lon:-1.732040,station:"",tide:false},
+  {n:26,name:"Whitechapel",hz:303,note:"",rm:135,mbm:86,lat:53.728750,lon:-1.729988,station:"",tide:false},
+  {n:27,name:"Lost Scholes",hz:297.51,note:"",rm:167,mbm:118,lat:53.729166,lon:-1.748043,station:"",tide:false},
+  {n:28,name:"Popplewell Blue",hz:293,note:"",rm:168,mbm:119,lat:53.729648,lon:-1.757250,station:"",tide:false},
+  {n:29,name:"Solstice Lo",hz:285,note:"",rm:111,mbm:62,lat:53.726841,lon:-1.769446,station:"",tide:false},
+  {n:30,name:"Railway-seum",hz:277.18,note:"C sharp",rm:135,mbm:86,lat:53.728610,lon:-1.792710,station:"",tide:false},
+  {n:31,name:"Viaduct Bottom",hz:271,note:"",rm:128,mbm:79,lat:53.729880,lon:-1.791320,station:"",tide:false},
+  {n:32,name:"Coley Loss",hz:265.43,note:"",rm:134,mbm:85,lat:53.734340,lon:-1.796290,station:"",tide:false},
+  {n:33,name:"Aulde Wheel Oyle",hz:262,note:"",rm:134,mbm:85,lat:53.737275,lon:-1.795081,station:"",tide:false},
+  {n:34,name:"Coley Gate",hz:256,note:"",rm:191,mbm:142,lat:53.738460,lon:-1.805770,station:"",tide:false},
+  {n:35,name:"Coley Church",hz:246.94,note:"B natural",rm:208,mbm:159,lat:53.738544,lon:-1.812480,station:"3rd Station",tide:false},
+  {n:36,name:"Pylon",hz:239,note:"",rm:159,mbm:110,lat:53.733470,lon:-1.823640,station:"",tide:false},
+  {n:37,name:"Slab",hz:233.33,note:"A sharp",rm:123,mbm:74,lat:53.731540,lon:-1.824030,station:"",tide:false},
+  {n:38,name:"MRB-23",hz:226,note:"",rm:109,mbm:60,lat:53.728097,lon:-1.833516,station:"",tide:false},
+  {n:39,name:"Look Back",hz:220,note:"A natural",rm:151,mbm:102,lat:53.725376,lon:-1.833873,station:"",tide:false},
+  {n:40,name:"Mardship Bow",hz:216,note:"",rm:204,mbm:155,lat:53.723355,lon:-1.834333,station:"",tide:false},
+  {n:41,name:"Beacon",hz:207.65,note:"G sharp",rm:260,mbm:211,lat:53.721946,lon:-1.846291,station:"Walk end",tide:false},
+];
+
+const FT = 3.28084;
+const ft = m => Math.round(m * FT);
+
+const SKY = [
+  [0.0,[222,40,8],[220,30,14]],[0.18,[220,32,12],[210,25,22]],[0.38,[205,20,20],[200,15,30]],
+  [0.55,[205,12,26],[200,10,34]],[0.72,[28,30,22],[200,12,26]],[0.88,[20,42,18],[250,30,16]],[1.0,[248,45,12],[230,40,8]],
+];
+const lerp=(a,b,t)=>a+(b-a)*t;
+function skyAt(p){
+  let i=0; while(i<SKY.length-1 && p>SKY[i+1][0]) i++;
+  const a=SKY[i], b=SKY[Math.min(i+1,SKY.length-1)];
+  const f=(b[0]===a[0])?0:(p-a[0])/(b[0]-a[0]);
+  const top=a[1].map((v,k)=>lerp(v,b[1][k],f)), bot=a[2].map((v,k)=>lerp(v,b[2][k],f));
+  return `linear-gradient(170deg, hsl(${top[0]},${top[1]}%,${top[2]}%), hsl(${bot[0]},${bot[1]}%,${bot[2]}%))`;
+}
+
+let idx=0;
+const card=document.getElementById('card');
+const stage=document.getElementById('stage');
+
+function render(dir){
+  const p=POINTERS[idx];
+  document.body.style.background=skyAt(idx/(POINTERS.length-1));
+
+  card.innerHTML=`
+    <div class="card-top">
+      <span class="num">POINTER ${String(p.n).padStart(2,'0')}</span>
+      <span class="station ${p.station?'show':''}">${p.station||''}</span>
+    </div>
+    <div class="name-wrap"><h1 class="name">${p.name}</h1></div>
+    <div class="pitch-block">
+      <div class="pitch-hz">${p.hz}<span class="pitch-unit"> Hz</span></div>
+      <div class="pitch-note">${p.note||'&nbsp;'}</div>
+    </div>
+    <div class="controls-row">
+      <div class="ctl rec" id="rec" role="button" aria-label="Record"><div class="dot"></div></div>
+      <div class="ctl compass" id="compass" role="button" aria-label="Compass">
+        <div class="rose" id="rose">
+          <div class="needle-n">N</div>
+          <div class="tick" style="transform:translateX(-50%) rotate(90deg)"></div>
+          <div class="tick" style="transform:translateX(-50%) rotate(180deg)"></div>
+          <div class="tick" style="transform:translateX(-50%) rotate(270deg)"></div>
+          <div class="bearing-mark" id="bearingMark"></div>
+        </div>
+      </div>
+      <div class="ctl speaker" id="speaker" role="button" aria-label="Sound pitch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5 6 9H2v6h4l5 4z"/>
+          <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+          <path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+          <line class="slash" x1="2" y1="22" x2="22" y2="2" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+    <div class="status" id="status">orient &middot; sound &middot; record</div>
+    <div class="data">
+      <div class="row"><span class="lab">REAL ELEVATION</span><span>${p.rm} m &middot; ${ft(p.rm)} ft</span></div>
+      <div class="row"><span class="lab">MB ELEVATION</span><span class="${p.tide?'tide':''}">${p.mbm} m &middot; ${ft(p.mbm)} ft${p.tide?' &middot; tidal':''}</span></div>
+      <div class="row"><span class="lab">GPS</span><span>${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}</span></div>
+    </div>`;
+
+  document.getElementById('cur').textContent=p.n;
+  document.getElementById('bar').style.width=((idx+1)/POINTERS.length*100)+'%';
+  document.getElementById('prev').disabled=idx===0;
+  document.getElementById('next').disabled=idx===POINTERS.length-1;
+
+  if(dir){ card.classList.remove('in-right','in-left'); void card.offsetWidth; card.classList.add(dir>0?'in-right':'in-left'); }
+
+  document.getElementById('speaker').addEventListener('click',e=>{e.stopPropagation();toggleTone(p.hz);});
+  document.getElementById('rec').addEventListener('click',e=>{e.stopPropagation();toggleRecord();});
+  document.getElementById('compass').addEventListener('click',e=>{e.stopPropagation();openCompass();});
+  applyCompass(); updateBearing();
+}
+
+function go(dir){
+  const ni=idx+dir; if(ni<0||ni>=POINTERS.length) return;
+  if(recording) stopRecord();
+  fadeOut();
+  card.classList.add(dir>0?'out-left':'out-right');
+  setTimeout(()=>{ card.classList.remove('out-left','out-right'); idx=ni; render(dir); },180);
+}
+
+// ===== AUDIO: tone + recording share one context & mix bus =====
+let actx=null, osc=null, master=null, soundingHz=null, mixBus=null;
+const FADE_IN=0.4, FADE_OUT=0.55;
+
+function ensureCtx(){
+  if(!actx){
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    mixBus=actx.createGain(); mixBus.gain.value=1.0;
+  }
+  if(actx.state==='suspended') actx.resume();
+}
+function startTone(hz){
+  ensureCtx(); stopOsc();
+  const t=actx.currentTime;
+  master=actx.createGain();
+  master.gain.setValueAtTime(0.0001,t);
+  master.gain.exponentialRampToValueAtTime(0.22,t+FADE_IN);
+  const lp=actx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=Math.min(hz*6,8000); lp.Q.value=0.3;
+  osc=actx.createOscillator(); osc.type='sine'; osc.frequency.value=hz;
+  osc.connect(lp).connect(master);
+  master.connect(actx.destination);
+  master.connect(mixBus);
+  osc.start(t);
+}
+function fadeOut(){
+  if(!actx||!master){ markSpeaker(false); soundingHz=null; return; }
+  const t=actx.currentTime;
+  try{ master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value,t);
+       master.gain.exponentialRampToValueAtTime(0.0001,t+FADE_OUT); }catch(e){}
+  const ref=osc; setTimeout(()=>{ try{ref&&ref.stop();}catch(e){}},(FADE_OUT*1000)+60);
+  osc=null; master=null; soundingHz=null; markSpeaker(false);
+}
+function stopOsc(){ try{osc&&osc.stop();}catch(e){} osc=null; master=null; }
+function markSpeaker(on){ const sp=document.getElementById('speaker'); if(sp) sp.classList.toggle('sounding',on); }
+function toggleTone(hz){ if(soundingHz!==null){ fadeOut(); return; } startTone(hz); soundingHz=hz; markSpeaker(true); }
+
+// ----- WAV recording (raw PCM from mixBus: tone + mic) -----
+let recording=false, recNode=null, micStream=null, micSrc=null, recBuffers=[], recLen=0, recRate=44100, recStart=0, recTimer=null;
+
+async function toggleRecord(){
+  if(recording){ stopRecord(); return; }
+  try{
+    ensureCtx();
+    micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    micSrc=actx.createMediaStreamSource(micStream);
+    micSrc.connect(mixBus);
+    recRate=actx.sampleRate; recBuffers=[]; recLen=0;
+    recNode=actx.createScriptProcessor(4096,1,1);
+    const silent=actx.createGain(); silent.gain.value=0;
+    mixBus.connect(recNode);
+    recNode.connect(silent).connect(actx.destination); // keep node alive without audible output
+    recNode.onaudioprocess=e=>{ const ch=e.inputBuffer.getChannelData(0); recBuffers.push(new Float32Array(ch)); recLen+=ch.length; };
+    recording=true; recStart=Date.now();
+    const r=document.getElementById('rec'); r&&r.classList.add('recording');
+    recTimer=setInterval(updateRecTime,200); updateRecTime();
+  }catch(err){ setStatus('mic blocked — allow microphone', true); }
+}
+function stopRecord(){
+  if(!recording) return; recording=false;
+  clearInterval(recTimer); recTimer=null;
+  const r=document.getElementById('rec'); r&&r.classList.remove('recording');
+  try{ mixBus.disconnect(recNode); }catch(e){}
+  try{ recNode.disconnect(); }catch(e){}
+  try{ micSrc.disconnect(); }catch(e){}
+  if(micStream){ micStream.getTracks().forEach(t=>t.stop()); micStream=null; }
+  recNode=null; micSrc=null;
+  if(recLen>0) exportWav();
+  setStatus('orient · sound · record', false);
+}
+function updateRecTime(){
+  const s=(Date.now()-recStart)/1000;
+  setStatus(`● REC ${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`, true);
+}
+function setStatus(txt, rec){
+  const el=document.getElementById('status'); if(!el) return;
+  el.innerHTML = rec ? `<span class="rectime">${txt}</span>` : txt;
+}
+function exportWav(){
+  const data=new Float32Array(recLen); let off=0;
+  for(const b of recBuffers){ data.set(b,off); off+=b.length; }
+  const blob=new Blob([encodeWav(data,recRate)],{type:'audio/wav'});
+  const p=POINTERS[idx];
+  const safe=p.name.replace(/[^a-z0-9]+/gi,'');
+  const d=new Date(), stamp=`${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`MardshipBow_P${String(p.n).padStart(2,'0')}_${safe}_${stamp}.wav`;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },1500);
+  recBuffers=[]; recLen=0;
+}
+function encodeWav(samples, rate){
+  const buf=new ArrayBuffer(44+samples.length*2), v=new DataView(buf);
+  const ws=(o,s)=>{ for(let i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); };
+  ws(0,'RIFF'); v.setUint32(4,36+samples.length*2,true); ws(8,'WAVE');
+  ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,rate,true); v.setUint32(28,rate*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+  ws(36,'data'); v.setUint32(40,samples.length*2,true);
+  let o=44; for(let i=0;i<samples.length;i++){ let s=Math.max(-1,Math.min(1,samples[i])); v.setInt16(o,s<0?s*0x8000:s*0x7FFF,true); o+=2; }
+  return buf;
+}
+
+// ===== COMPASS + GPS =====
+let heading=null, gps=null, gpsWatch=null;
+function startSensors(){
+  function onOrient(e){
+    let h=null;
+    if(typeof e.webkitCompassHeading==='number'){ h=e.webkitCompassHeading; }
+    else if(e.absolute && typeof e.alpha==='number'){ h=360-e.alpha; }
+    if(h!=null){ heading=(h+360)%360; applyCompass(); }
+  }
+  if(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission==='function'){
+    DeviceOrientationEvent.requestPermission().then(s=>{ if(s==='granted'){
+      window.addEventListener('deviceorientationabsolute',onOrient,true);
+      window.addEventListener('deviceorientation',onOrient,true);
+    }}).catch(()=>{});
+  } else {
+    window.addEventListener('deviceorientationabsolute',onOrient,true);
+    window.addEventListener('deviceorientation',onOrient,true);
+  }
+  if(navigator.geolocation && !gpsWatch){
+    gpsWatch=navigator.geolocation.watchPosition(
+      pos=>{ gps={lat:pos.coords.latitude,lon:pos.coords.longitude}; updateBearing(); },
+      ()=>{}, {enableHighAccuracy:true,maximumAge:5000,timeout:20000});
+  }
+}
+function bearingTo(p){
+  if(!gps) return null;
+  const f1=gps.lat*Math.PI/180, f2=p.lat*Math.PI/180, dl=(p.lon-gps.lon)*Math.PI/180;
+  const y=Math.sin(dl)*Math.cos(f2);
+  const x=Math.cos(f1)*Math.sin(f2)-Math.sin(f1)*Math.cos(f2)*Math.cos(dl);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+function applyCompass(){
+  const rose=document.getElementById('rose');
+  if(rose && heading!=null) rose.style.transform=`rotate(${-heading}deg)`;
+  const overlayShown=document.getElementById('overlay').classList.contains('show');
+  const big=document.getElementById('bigRose');
+  if(big && heading!=null && overlayShown) big.style.transform=`rotate(${-heading}deg)`;
+  updateBearing();
+}
+function updateBearing(){
+  const next = idx<POINTERS.length-1 ? POINTERS[idx+1] : null;
+  const b = next ? bearingTo(next) : null;
+  const mark=document.getElementById('bearingMark');
+  if(mark){ if(b!=null){ mark.style.transform=`translateX(-50%) rotate(${b}deg)`; mark.classList.add('show'); } else mark.classList.remove('show'); }
+  const bigMark=document.getElementById('bigBearing');
+  if(bigMark){ if(b!=null){ bigMark.style.transform=`translateX(-50%) rotate(${b}deg)`; bigMark.classList.add('show'); } else bigMark.classList.remove('show'); }
+  const ov=document.getElementById('ovStatus');
+  if(ov && document.getElementById('overlay').classList.contains('show')){
+    let parts=[ heading!=null ? `heading ${Math.round(heading)}°` : 'turn slowly to calibrate' ];
+    if(next) parts.push(b!=null ? `next — ${next.name}: ${Math.round(b)}°` : `next — ${next.name}: waiting for GPS`);
+    else parts.push('final Pointer — no onward bearing');
+    ov.innerHTML=parts.join('<br>');
+  }
+}
+function openCompass(){ startSensors(); document.getElementById('overlay').classList.add('show'); applyCompass(); updateBearing(); }
+document.getElementById('ovClose').addEventListener('click',()=>document.getElementById('overlay').classList.remove('show'));
+
+// ===== NAV / INPUT =====
+document.getElementById('prev').addEventListener('click',()=>go(-1));
+document.getElementById('next').addEventListener('click',()=>go(1));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft')go(-1);
+  if(e.key==='ArrowRight')go(1);
+  if(e.key===' '){e.preventDefault(); toggleTone(POINTERS[idx].hz);}
+});
+let sx=0,sy=0,touching=false;
+stage.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;touching=true;},{passive:true});
+stage.addEventListener('touchend',e=>{
+  if(!touching)return; touching=false;
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)) go(dx<0?1:-1);
+},{passive:true});
+
+render(0);
+</script>
+</body>
+</html>
