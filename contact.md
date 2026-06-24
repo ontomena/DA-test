@@ -74,8 +74,6 @@ Please use form below if you'd like to get in touch:
   <button type="submit">send</button>
 </form>
 
-Insta: [@simonbrdly](https://www.instagram.com/simonbrdly)
-
 ---
 
 ## subscribe
@@ -86,4 +84,8 @@ Get new posts by email via [Buttondown](https://buttondown.email/) (privacy-focu
 
 ---
 
+Insta: [@simonbrdly](https://www.instagram.com/simonbrdly)
+
+
 This site was put together on Github using GitHub Desktop and Visual Studio Code. Although Microsoft acquired GitHub in 2018, the free version still exists relatively unmolested.
+
