@@ -83,7 +83,7 @@ permalink: /contact/
   onsubmit="window.open('https://buttondown.email/ontomena', 'popupwindow')"
   style="margin-bottom: 10px;"
 >
-  <input type="email" name="email" placeholder="your@email.com" required style="padding: 5px 0; width: 240px; font-family: Georgia, serif; font-size: 0.95em; border: none; border-bottom: 1px solid currentColor; outline: none; background: transparent;" />
+  <input type="email" name="email" placeholder="your@email.com" required style="padding: 5px 0; width: 240px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-size: 0.95em; border: none; border-bottom: 1px solid currentColor; outline: none; background: transparent;" />
   <input type="submit" value="subscribe →" style="background: none; border: none; padding: 0 0 0 10px; font-family: inherit; font-size: 0.9em; cursor: pointer; text-decoration: underline; text-underline-offset: 3px;" />
 </form>
 
