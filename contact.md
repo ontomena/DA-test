@@ -14,9 +14,9 @@ permalink: /contact/
 <h2 style="font-size: 1.1em; font-weight: normal; margin-bottom: 15px;">contact</h2>
 
 <form action="https://formspree.io/f/mbdekjwo" method="POST" style="margin-bottom: 10px;">
-  <p><input type="text" name="name" placeholder="name" required style="display: block; width: 300px; padding: 5px 0; margin-bottom: 10px; font-family: Georgia, serif; font-size: 0.95em; border: none; border-bottom: 1px solid #e0e0e0; outline: none;"></p>
-  <p><input type="email" name="email" placeholder="email" required style="display: block; width: 300px; padding: 5px 0; margin-bottom: 10px; font-family: Georgia, serif; font-size: 0.95em; border: none; border-bottom: 1px solid #e0e0e0; outline: none;"></p>
-  <p><textarea name="message" placeholder="message" required rows="5" style="display: block; width: 300px; padding: 5px 0; margin-bottom: 15px; font-family: Georgia, serif; font-size: 0.95em; border: none; border-bottom: 1px solid #e0e0e0; outline: none; resize: none;"></textarea></p>
+  <p><input type="text" name="name" placeholder="name" required style="display: block; width: 300px; padding: 6px 8px; margin-bottom: 10px; font-family: Georgia, serif; font-size: 0.95em; border: 1px solid #d0d0d0; border-radius: 2px; outline: none;"></p>
+  <p><input type="email" name="email" placeholder="email" required style="display: block; width: 300px; padding: 6px 8px; margin-bottom: 10px; font-family: Georgia, serif; font-size: 0.95em; border: 1px solid #d0d0d0; border-radius: 2px; outline: none;"></p>
+  <p><textarea name="message" placeholder="message" required rows="5" style="display: block; width: 300px; padding: 6px 8px; margin-bottom: 15px; font-family: Georgia, serif; font-size: 0.95em; border: 1px solid #d0d0d0; border-radius: 2px; outline: none; resize: none;"></textarea></p>
   <input type="submit" value="send →" style="background: none; border: none; padding: 0; font-family: Georgia, serif; font-size: 0.95em; color: #4a7c9e; cursor: pointer; text-decoration: underline;">
 </form>
 
@@ -31,7 +31,7 @@ permalink: /contact/
   onsubmit="window.open('https://buttondown.email/ontomena', 'popupwindow')"
   style="margin-bottom: 10px;"
 >
-  <input type="email" name="email" placeholder="your@email.com" required style="padding: 5px 0; width: 240px; font-family: Georgia, serif; font-size: 0.95em; border: none; border-bottom: 1px solid #e0e0e0; outline: none;" />
+  <input type="email" name="email" placeholder="your@email.com" required style="padding: 6px 8px; width: 220px; font-family: Georgia, serif; font-size: 0.95em; border: 1px solid #d0d0d0; border-radius: 2px; outline: none;" />
   <input type="submit" value="subscribe →" style="background: none; border: none; padding: 0 0 0 10px; font-family: Georgia, serif; font-size: 0.95em; color: #4a7c9e; cursor: pointer; text-decoration: underline;" />
 </form>
 
