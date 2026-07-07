@@ -518,3 +518,7 @@ footer {
 .download-btn:hover {
   text-decoration: underline;
 }
+
+.home-content img[alt="Arts Council Logo"] {
+  max-width: 200px;
+}
