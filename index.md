@@ -26,6 +26,6 @@ collaborations:
 vimeo: [ArtCouple](https://vimeo.com/user127952551)  
 bandcamp: [ESS<>GEE](https://essgee1.bandcamp.com/)
 
-<p align="center"><img src="{{ '/assets/images/grant_jpeg_black.jpg' | relative_url }}" alt="Arts Council Logo"></p>
+<p align="center"><img src="{{ '/assets/images/grant_jpeg_black.jpg' | relative_url }}" alt="Arts Council Logo" style="max-width: 200px; height: auto;"></p>
 
 </div>
