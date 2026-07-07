@@ -56,7 +56,7 @@ insta/threads: [@simonbrdly](https://www.instagram.com/simonbrdly)
 bandcamp: [simonbradley](https://simonbradley.bandcamp.com/)
 
 
-<p align="center"><img src="https://www.artscouncil.org.uk/sites/default/files/download-file/grant_jpeg_black.jpg" alt="Arts Council Logo" style="max-width: 300px;"></p>
+<p align="center"><img src="{{ '/assets/images/grant_jpeg_black.jpg' | relative_url }}" alt="Arts Council Logo"></p>
 
 </div>
 

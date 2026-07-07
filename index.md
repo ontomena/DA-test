@@ -12,7 +12,7 @@ The latest ongoing experiment along these lines, is literally along lines: *Magn
 
 Sound penetrates deeply while remaining fleeting. Periodic ritual walking heightens our awareness of Deep Time as an infinitesimal process experienced constantly, yet largely unnoticed. Ultimately, an openness to small variations within a vast ongoing improvisation is all we have.
 
-<p align="center"><img src="{{ '/assets/images/ivy-league.jpg' | relative_url }}" alt="Waves image"></p>
+<p align="center"><img src="{{ '/assets/images/ivy-league.jpg' | relative_url }}" alt="Ivy league image"></p>
 
 </div>
 
@@ -26,6 +26,6 @@ collaborations:
 vimeo: [ArtCouple](https://vimeo.com/user127952551)  
 bandcamp: [ESS<>GEE](https://essgee1.bandcamp.com/)
 
-<p align="center"><img src="https://www.artscouncil.org.uk/sites/default/files/download-file/grant_jpeg_black.jpg" alt="Arts Council Logo" style="max-width: 300px;"></p>
+<p align="center"><img src="{{ '/assets/images/grant_jpeg_black.jpg' | relative_url }}" alt="Arts Council Logo"></p>
 
 </div>
