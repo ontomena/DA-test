@@ -12,6 +12,9 @@ the story…what was fascinating… why - questions and finding out answers etc 
 
 In November 2022, UK geospatial history was made as all three 'norths' (magnetic, true and grid) aligned and met at a point in Langton Matravers in Dorset, for the first time. Since then the alignment has moved northwards up the agonic line towards Scotland. In December 2026, the conjunction will finally leave the mainland at Fraserburgh.
 
+All of my Geomagnetic Audio tools available [here](https://github.com/ontomena/data_to_sound_tools.git)
+
+The publicity for the Equinoctial sharing event at FoN is [here](https://www.fonfestival.org/new-event/concert-magnet-opus/) 
 
 Compositional params
 
@@ -56,7 +59,11 @@ insta/threads: [@simonbrdly](https://www.instagram.com/simonbrdly)
 bandcamp: [simonbradley](https://simonbradley.bandcamp.com/)
 
 
+<p align="center"><img src="{{ '/assets/images/Magnetopus.jpg' | relative_url }}" alt="Magnet Opus image"></p>
+
 <p align="center"><img src="{{ '/assets/images/grant_jpeg_black.jpg' | relative_url }}" alt="Arts Council Logo"></p>
+
+
 
 </div>
 
