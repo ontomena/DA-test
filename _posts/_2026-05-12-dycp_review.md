@@ -5,14 +5,14 @@ date: 2026-05-05
 categories: [word]
 tags: [projects, research]
 image: /assets/images/MagnetOpusThumb.jpg
-excerpt: "This is the final report on the Arts Council funded DYCP project I carried out from April 2025 to May 2026--Data-driven Ambisonics: using geomagnetic data in sound-based performance and installation"
+excerpt: "This is based on my final report on the Arts Council funded DYCP project carried out from April 2025 to May 2026--Data-driven Ambisonics: using geomagnetic data in sound-based performance and installation"
 ---
 This is gradually formulating 
 the story…what was fascinating… why - questions and finding out answers etc very simple very straightforward…
 
-In November 2022, UK geospatial history was made as all three 'norths' (magnetic, true and grid) aligned and met at a point in Langton Matravers in Dorset, for the first time. Since then the alignment has moved northwards up the agonic line towards Scotland. In December 2026, the conjunction will finally leave the mainland at Fraserburgh.
+In November 2022, UK geospatial history was made as all three 'norths' (magnetic, true and grid) aligned and met at a point in Langton Matravers in Dorset, for the first time. Since then the alignment has moved northwards up the agonic line towards Scotland. In December 2026, this marvellous conjunction will ease away from the mainland at Fraserburgh.
 
-All of my Geomagnetic Audio tools available [here](https://github.com/ontomena/data_to_sound_tools.git)
+All of my main Geomagnetic Audio tools are freely available [here](https://github.com/ontomena/data_to_sound_tools.git)
 
 The publicity for the Equinoctial sharing event at FoN is [here](https://www.fonfestival.org/new-event/concert-magnet-opus/) 
 
