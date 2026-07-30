@@ -518,3 +518,7 @@ footer {
 .download-btn:hover {
   text-decoration: underline;
 }
+.post-content h1 {
+  font-size: 1.4em;
+  margin-bottom: 15px;
+}

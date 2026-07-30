@@ -10,7 +10,7 @@ My main modes of practice have always oscillated between sound/music, text/image
 
 An ongoing experiment along these lines, is literally along lines: *Magnet Opus*, which traces global and local geomagnetic intensities, using measurement data to configure sound in relation to the declination of magnetic north and the Sun's cyclic output of heliospheric plasma. *Magnet Opus* developed from *The Barrow Alignment*, a collaboration with Jonathan Lindh, sponsored by [Full of Noises](https://www.fonfestival.org/)(FoN). The initial work resulted in an Arts Council England DYCP grant that enabled me to explore geomagnetism and ambisonics [here](https://www.displacementactivities.org/projects/sound/2025/03/21/geoambo/).
 
-Sound penetrates deeply while remaining fleeting. Periodic ritual walking heightens our awareness of Deep Time as an infinitesimal process experienced constantly, yet largely unnoticed. Ultimately, an openness to small displacements and variations within a vast ongoing improvisation is all we have.
+Sound penetrates deeply while remaining fleeting. Periodic ritual walking heightens our awareness of Deep Time as an infinitesimal process experienced constantly, yet largely unnoticed. Not everything is Deep though. Ultimately, an openness to small displacements and variations within a vast ongoing improvisation can teach us a lot. Many quests and questions remain, and nothing much can be considered complete. 
 
 <p align="center"><img src="{{ '/assets/images/ivy-league.jpg' | relative_url }}" alt="Ivy league image"></p>
 
