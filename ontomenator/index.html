@@ -477,6 +477,11 @@
       #mob-list .mob-mapbtn-wrap { padding:20px 22px 8px; }
       /* When list mode is active, hide the desktop control bar clutter behind the list */
       body.mob-list-active #controls, body.mob-list-active #canvas-container { }
+      /* Phone: reading panel fills the screen so the map never peeks through */
+      #reading-overlay.visible { align-items:stretch; justify-content:stretch; }
+      #reading-panel { width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; border-left:none !important; border-radius:0 !important; }
+      /* When a node is open on a phone, hide the canvas + control bar entirely */
+      body.mob-reading #canvas-container, body.mob-reading #controls, body.mob-reading #title-overlay { display:none !important; }
     }
   </style></head>
 <body>
@@ -500,7 +505,7 @@ Ontomena is a neologism fusing on/ontos (being, that which is in the act of bein
 
 <!-- Reading panel -->
 <div id="reading-overlay" class="">
-  <div id="reading-panel" style="border-left: 8px solid rgb(47, 86, 165);">
+  <div id="reading-panel" style="border-left: 8px solid rgb(194, 104, 39);">
     <button class="panel-nav-arrow panel-nav-left" id="panel-nav-left" onclick="navigatePanel(-1)" style="display: flex;">‹</button>
     <button class="panel-nav-arrow panel-nav-right" id="panel-nav-right" onclick="navigatePanel(1)" style="display: flex;">›</button>
     <div class="rp-toolbar">
@@ -510,34 +515,17 @@ Ontomena is a neologism fusing on/ontos (being, that which is in the act of bein
       <button onclick="closeReading()">[ close ] esc</button>
     </div>
     <div class="rp-aspect-nav" id="rp-aspect-nav" style="display: flex;">
-      <span id="rp-aspect-pos">1 / 41</span>
+      <span id="rp-aspect-pos">2 / 2 — Panonticism</span>
     </div>
-    <div id="rp-view-mode" style="display: block;">
-      <div id="rp-breadcrumb" style="display: none; margin-bottom: 8px;"></div>
-      <div class="rp-category" id="rp-cat" style="color: rgb(47, 86, 165);">core concept</div>
-      <div class="rp-title" id="rp-title">Ontomena</div>
-      <div class="rp-subtitle" id="rp-sub">being-as-it-shows-itself</div>
-      <div class="rp-body" id="rp-body" title=""><pthese threads="" stem="" from="" a="" direct="" feeling,="" an="" intuition,="" about="" the="" existence="" of="" fundamental="" things,="" or="" things="" fundamentally.="" finding="" its="" way="" into="" language,="" word="" '<em="">ontomena' drifted to me in the misty 1990s, and has continued to inspire and torment ever since.<p></p>
-<p><em>Ontomena</em> is a neologism fusing <em>on/ontos</em> (being, that which is in the act of being) with <em>-omena</em> (showing, appearing, manifesting — from <em>phainomena</em>).</p>
-
-<p>From the Ancient Greek roots we have: <em>ὄν / ὄντος</em> (on / ontos) — being/that which is (genitive of <em>ὤν</em>, present participle of <em>εἶναι</em>, to be), and <em>φαινόμενα</em> (phainomena) plural of <em>φαινόμενον</em> (phainomenon) — that which appears, that which shows itself (singular; from <em>φαίνεσθαι</em>, to show oneself, to appear). Hence:
-</p><ul style="margin-left:24px;">
- <li>ὀντόμενον (ontomenon) — the singular (being-as-it-shows-itself, one instance)</li>
- <li>ὀντόμενα (ontomena) — the plural (the field of beings-showing-themselves)</li>
-</ul>
-<p> It is essential that the word is plural, since a single thing without context makes little sense. Husserl named his discipline Phänomenologie — the logos (account/study) of Phänomena (things exactly as they appear to our conscious awareness). Phenomenology itself is implicitly oriented toward the plural field of appearances rather than any single instance, For Husserl, appearing is necessarily a manifold.</p>
-
-<p>Ontomena works against the Platonic split between the sensory world and the absolute intelligible realm reinforced by Kant and others. By welding ontology (fundamental being) to phenomenality (felt personal experience), ontomena asserts their inseparability: there is no being that doesn't show itself, and no showing that isn't a mode of being.</p><p>The grammatical rudeness of the word enacts its meaning— a portmanteau that shouldn't exist in Greek, drawing attention to the fact that the <em>separation</em> of ontology from phenomenology was itself a questionable conceptual and cultural construction, not a 'given'.</p>
-<p>Husserl kept phenomenology and ontology as distinct enterprises. His phenomenology was a rigorous '<em>science of consciousness</em>' — how things appear to consciousness — but the question of Being (what it is for something to be) remained separate. Husserl inherited this tradition, mainly from Kant: the phenomena are what we can know, but the thing-in-itself (<em>Ding an sich</em>)—Being as such— lies beyond appearance, unknowable.</p>
-<p>Ontomena finds more alignment with Heidegger. In <i>Being and Time</i> (1927), he explicitly collapses the above separation, insisting that phenomenology <i>is</i> ontology — you can't ask what Being is except through how Being shows itself, and you can't account for appearing without asking what it is to be. But there is an immanent anthropocentricism in Heidegger sustained by the concept of Dasein (the human way of being,  capable of reflection). Here I diverge. He re-introduces a separation alluded to earlier and cannot/does not proceed into the <em>more-than-human</em> realm. Ontomena <i>can</i> make that step though, by collapsing phenomenology and ontology for everything that is, being and showing are co-originating and immediately plural. The plurality of ontomena echoes the plurality of beings, each showing itself and revealing many others— <i>not just phenomena for a perceiving subject but ontomena as such</i>. Each thing has being because all things be. It is a fundamental thing thing.</p>
-
-
- <p>At the outset, putting Heidegger to one side for now, I was suspicious of  the legacy of so-called Western philosophy, it seemed that there were too many complications arising from a false separation of the being of things, consciousness and an underlying reality. There were too many veils, a Wizard of Oz moving all the levers, aloof and inscrutable. Forbidding all the things to truly BE, regardless of how conscious they might be at a given time and place seemed to me, dare I say it: a tad imperious---'His Master's Voice', kind of thing. To me, the things were--in, by, with, for and through us--essentially our equals through the (only) lens of experience. Consciousness is a wonder, but there is little sense in the idea of it being 'higher' or 'lower' than what shows, sounds or feels itself. Rather than standing aloof from a mysterious, problematic underpinning, I've always felt that the existence of consciousness simply proves that things can be conscious, no more no less. Still plenty of room for philosophical nuance, without abandoning any quest for clarity</p>
-<p>The ontomenal perspective is not far from dialectical materialism, for example, as embodied cognition. Our brains are situated in materiality. From this basic acknowledgement, many philosophies flow: from mainstream to radical <em>enactivism</em> through Gibsonian <em>affordances</em>... and so on, towards distributed cognitions. An open field with a lot of scope for debate.</p> <p>Undaunted, I set up my Gmail account as ontomena on 6th January, 2005 with the strapline: Ontomena Ontological Solutions. I've never tried to formalise it, and that is partly the point of the Ontomenator (this User Interface/UI). The method unfolding here is down to you to activate. It is right that it is an ongoing process rather than a resolved system, or dogma--much as I love dogs. I would expect that some of these things will already have appeared to you, as they have to others over the centuries. You can start and end where you like. To a point. Or to a ‘<em>node</em>’, as these panels are termed.</p><p>A handy guide would be a reminder from Claude Monet: “<em>I’m never finished with my paintings; the further I get, the more I seek the impossible and the more powerless I feel</em>.”</p> <img src="https://raw.githubusercontent.com/ontomena/displacementactivities/main/ontomenator/images/ontomena_key.jpeg" alt="Ontomena" style="max-width:100%;margin:12px 0 4px;opacity:0.9;"><br><span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:#a8a090;display:block;margin-bottom:12px;">From 2006 - the original Ontomena keyring!</span><div class="rp-break"><span>◆</span></div><p class="rp-quote"><a href="https://www.youtube.com/watch?v=W-tkrBcxj8c" target="_blank">Can we know what is true without the institution that claims to mediate it?</a><br><span class="rp-attr">The Conscious Radical.</span></p>
-<div class="rp-reflection"><span class="rp-refl-title">Reflection</span><p>This iteration of the Ontomena Project is partly about re-situating philosophy in my life. It has been important at various times, and now I face a health uncertainty that has brought a keen focus to what is important. Walking, music and philosophy, and the writing that these activities engender. There is a new urgency to philosophy since it is finding itself at the centre of the technotopia autocracy or arbitrocracy we inhabit. Anthropic prizes its philosopher princes, and Palantir calls its disturbingly broad and detailed data-basis its 'ontology'. I think there is something not quite right about either of those contexts, but the need to face up to them and to continue questioning and resisting has perhaps never been more urgent. Not just for me.  </p></div></pthese></div>
-      <div id="rp-connections"><div class="rp-aspects-box"><div class="rp-conn-label">folded aspects</div><a class="rp-conn-link" href="#" onclick="if(!expandedNodes.has('ontomena')){expandedNodes.add('ontomena');renderNodes();setTimeout(updateConnections,50);}openNode('menon');return false;">-menon / -mena</a><a class="rp-conn-link" href="#" onclick="if(!expandedNodes.has('ontomena')){expandedNodes.add('ontomena');renderNodes();setTimeout(updateConnections,50);}openNode('ontos');return false;">On / Ontos</a><a class="rp-conn-link" href="#" onclick="if(!expandedNodes.has('ontomena')){expandedNodes.add('ontomena');renderNodes();setTimeout(updateConnections,50);}openNode('deontology');return false;">De-ontology</a><a class="rp-conn-link" href="#" onclick="if(!expandedNodes.has('ontomena')){expandedNodes.add('ontomena');renderNodes();setTimeout(updateConnections,50);}openNode('onto-mena');return false;">ONTO / MENA</a></div><div class="rp-conn-label" style="margin-top:16px;">connections</div><a class="rp-conn-link" href="#" onclick="openNode('abduction');return false;" style="border-left-color:hsl(42,66.8%,46.8%)">Abduction / Associative Method</a><a class="rp-conn-link" href="#" onclick="openNode('aisthesis');return false;" style="border-left-color:hsl(25,66.7%,45.7%)">Aisthesis / An-aisthesis</a><a class="rp-conn-link" href="#" onclick="openNode('heidegger');return false;" style="border-left-color:hsl(220,50.3%,42.9%)">Aletheia</a><a class="rp-conn-link" href="#" onclick="openNode('edinburgh-ssk');return false;" style="border-left-color:hsl(42,62.6%,47.3%)">Anything Goes</a><a class="rp-conn-link" href="#" onclick="openNode('aphanipoiesis');return false;" style="border-left-color:hsl(148,32.4%,38.0%)">Aphanipoiesis</a><a class="rp-conn-link" href="#" onclick="openNode('assemblages');return false;" style="border-left-color:hsl(42,65.0%,47.0%)">Assemblages</a><a class="rp-conn-link" href="#" onclick="openNode('platos-cave');return false;" style="border-left-color:hsl(220,48.6%,43.3%)">Cave</a><a class="rp-conn-link" href="#" onclick="openNode('herzog');return false;" style="border-left-color:hsl(25,58.7%,46.8%)">Ecstatic Truth</a><a class="rp-conn-link" href="#" onclick="openNode('berkeley');return false;" style="border-left-color:hsl(220,47.3%,43.6%)">Esse est Percipi</a><a class="rp-conn-link" href="#" onclick="openNode('panonticism');return false;" style="border-left-color:hsl(25,66.7%,45.7%)">Panonticism</a><a class="rp-conn-link" href="#" onclick="openNode('stet');return false;" style="border-left-color:hsl(270,40.1%,44.1%)">Stet</a><a class="rp-conn-link" href="#" onclick="openNode('symbol-metaphor');return false;" style="border-left-color:hsl(42,65.0%,47.0%)">Symbol / Metaphor / Image</a><a class="rp-conn-link" href="#" onclick="openNode('levinas');return false;" style="border-left-color:hsl(220,47.3%,43.6%)">The Flesh / The Face</a></div>
+    <div id="rp-view-mode" style="display: none;">
+      <div id="rp-breadcrumb" style="display: block; margin-bottom: 8px;"><a class="rp-breadcrumb-link" href="#" style="color:hsl(25,66.7%,45.7%)" onclick="openReading('panonticism');return false;">↑ Panonticism</a></div>
+      <div class="rp-category" id="rp-cat" style="color: rgb(194, 104, 39);">ethics / practice</div>
+      <div class="rp-title" id="rp-title"></div>
+      <div class="rp-subtitle" id="rp-sub"></div>
+      <div class="rp-body" id="rp-body" title=""></div>
+      <div id="rp-connections"></div>
     </div>
-    <div id="rp-edit-mode" style="display: none;"></div>
+    <div id="rp-edit-mode" style="display: block;"></div>
   </div>
 </div>
 
@@ -3416,7 +3404,7 @@ function clearSelected(){
   selectedNodeId=null;
 }
 
-function openReading(id){const node=findNodeById(id);if(!node)return;previewEl.classList.remove('visible');clearTimeout(previewDelayTimeout);previewNodeId=null;if(_navSilent){currentReadingId=id;}else{if(navPos<navHistory.length-1){navHistory=navHistory.slice(0,navPos+1);}if(navHistory[navHistory.length-1]!==id){navHistory.push(id);}navPos=navHistory.length-1;currentReadingId=id;}editMode=false;clearSelected();const _be=document.getElementById('btn-edit');if(_be){_be.textContent='[ edit ]';_be.style.display=(tourMode||animatedTour)?'none':'';}showViewMode(node);readingOverlay.classList.add('visible');const _rp=document.getElementById('reading-panel');if(_rp)_rp.scrollTop=0;requestAnimationFrame(()=>{if(_rp)_rp.scrollTop=0;});setTimeout(updateConnections,50);}
+function openReading(id){const node=findNodeById(id);if(!node)return;if(window._mobEnabled){var _ms=document.getElementById('mob-splash');if(_ms)_ms.classList.remove('on');var _ml=document.getElementById('mob-list');if(_ml)_ml.classList.remove('on');document.body.classList.remove('mob-list-active');document.body.classList.add('mob-reading');window._mobMode='list';}previewEl.classList.remove('visible');clearTimeout(previewDelayTimeout);previewNodeId=null;if(_navSilent){currentReadingId=id;}else{if(navPos<navHistory.length-1){navHistory=navHistory.slice(0,navPos+1);}if(navHistory[navHistory.length-1]!==id){navHistory.push(id);}navPos=navHistory.length-1;currentReadingId=id;}editMode=false;clearSelected();const _be=document.getElementById('btn-edit');if(_be){_be.textContent='[ edit ]';_be.style.display=(tourMode||animatedTour)?'none':'';}showViewMode(node);readingOverlay.classList.add('visible');const _rp=document.getElementById('reading-panel');if(_rp)_rp.scrollTop=0;requestAnimationFrame(()=>{if(_rp)_rp.scrollTop=0;});setTimeout(updateConnections,50);}
 function downloadNodeText(){
   const node=findNodeById(currentReadingId);
   if(!node)return;
@@ -4000,7 +3988,7 @@ function _doCloseReading(){
   document.querySelectorAll('#reading-panel audio').forEach(a=>{a.pause();a.currentTime=0;});
   currentReadingId=null;editMode=false;setUnsaved(false);navHistory=[];navPos=-1;
   const _be=document.getElementById('btn-edit');if(_be)_be.textContent='[ edit ]';
-  if(window._mobEnabled && window._mobMode==='list'){ _mobShowList(); }
+  if(window._mobEnabled){document.body.classList.remove('mob-reading');if(window._mobMode==='list'){ _mobShowList(); }}
 }
 function showClosePrompt(){
   const existing=document.getElementById('close-prompt');if(existing)existing.remove();
@@ -5378,6 +5366,11 @@ document.getElementById('bg-image').style.opacity=bgOpacity;
       #mob-list .mob-mapbtn-wrap { padding:20px 22px 8px; }
       /* When list mode is active, hide the desktop control bar clutter behind the list */
       body.mob-list-active #controls, body.mob-list-active #canvas-container { }
+      /* Phone: reading panel fills the screen so the map never peeks through */
+      #reading-overlay.visible { align-items:stretch; justify-content:stretch; }
+      #reading-panel { width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; border-left:none !important; border-radius:0 !important; }
+      /* When a node is open on a phone, hide the canvas + control bar entirely */
+      body.mob-reading #canvas-container, body.mob-reading #controls, body.mob-reading #title-overlay { display:none !important; }
     }
   `;
   document.head.appendChild(css);
@@ -5455,16 +5448,14 @@ document.getElementById('bg-image').style.opacity=bgOpacity;
     splash.classList.remove('on');
     list.classList.remove('on');
     document.body.classList.remove('mob-list-active');
+    document.body.classList.remove('mob-reading');
     // zoom the canvas to fit all nodes
     if(typeof fitAll==='function'){ setTimeout(fitAll,60); }
     else if(typeof focusHome==='function'){ setTimeout(focusHome,60); }
   };
   // When a node is tapped from the list: open reading, and mark that closing returns to list
   window._mobOpen = function(id){
-    list.classList.remove('on');
-    document.body.classList.remove('mob-list-active');
-    window._mobMode='list'; // so close returns to list
-    if(typeof openReading==='function') openReading(id);
+    if(typeof openReading==='function') openReading(id); // openReading handles mobile state
   };
 })();
 
