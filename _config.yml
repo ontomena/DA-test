@@ -5,6 +5,7 @@ url: "https://www.displacementactivities.org"
 
 plugins:
   - jekyll-feed
+  - jekyll-sitemap
 
 # Build settings
 markdown: kramdown
